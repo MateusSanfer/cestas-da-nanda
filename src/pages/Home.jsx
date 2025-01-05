@@ -1,100 +1,172 @@
-// Exemplo: pages/Home.jsx
 import React, { useState } from "react";
+import CardCesta from "../components/CardCesta"; // Importa o componente CardCesta
 
+const Home = ({ addToCart }) => {
 
-const Home= () => {
-  const [cart, setCart] = useState([])
-  const [showCart, setShowCart] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
   const baskets = [
     {
-      id: "1",
-      name: "Cesta Româtica",
-      description: "Cesta Especial com chocolates e vinho",
-      price: 199.90,
-      includedItems: ['Chocolate', 'Vinho', 'Flores'],
-      avaliableExtras:  [
-        {name: "Urso de Pelúcia", price: 50},
-        {name: "Vinho Premium", price: 100},
-      ]
-    }
+        id: 1,
+        name: 'Cesta Café da Manhã',
+        description: 'Deliciosa cesta com pães, frutas e café',
+        price: 130.00,
+        includedItems: [
+          '4 Biscoitos salgados',
+          '1 Barra de Cereal',
+          '1 Bolinho',
+          '1 Sachê de café ',
+          '2 Geleias ',
+          '1 Pão de mel',
+          '2 chocolates ',
+          '1 Achocolatado',
+          '1 Iogurte',
+          '1 Fruta',
+          '1 Torrada',
+          '1 Pão com frios',
+          '1 Sucrilhos',
+        ],
+        availableExtras: [
+          { name: 'Caixa em MDF + 1 xícara + 1 Balão', price: 50 },
+          { name: '1 Balão', price: 20 }
+        ],
+        selectedExtras: null,
+        includedExtraItems: []
+      },
+ 
+    {
+        id: 2,
+        name: 'Cesta Com Amor',
+        description: 'Cesta especial com chocolates e vinho',
+        price: 44.99,
+        includedItems: [
+        'Cesta',
+        '1 Mini vinho',
+        '1 Taça ',
+        '1 Kit Kat',
+        'Chocolates',
+
+        ],
+        availableExtras: [
+          { name: 'Ursinho com tolha de rosto', price: 15 },
+        
+        ],
+        selectedExtras: null,
+        includedExtraItems: []
+      },
+      {
+        id: 3,
+        name: 'Cesta Gourmet',
+        description: 'Seleção de queijos e frios premium',
+        price: 194.99,
+        includedItems: [
+        'Panetone 400g',
+        'Vinho 750ml',
+        'Taça', 
+        'Batata frita',
+        'Snacks',
+        'Chocolates',
+        'Waffers',
+        'Barrinha de cereal', 
+        'Mix passas',
+        'Cappuccino',
+        ],
+        availableExtras: [
+          { name: 'Creme de avelã', price: 14.99},
+          { name: 'Mini petisqueira de frios', price: 89.90 }
+        ],
+        selectedExtras: null,
+        includedExtraItems: []
+      },
+      {
+        id: 4,
+        name: 'Cesta Fitness',
+        description: 'Cesta com alimentos saudaváveis e nutritivos',
+        price: 179.90,
+        includedItems: [
+            'Frutas diversas', 
+            '2 Barrinhas de Cereal', 
+            'Suco Detox',
+            'Whey Protein 500g'
+        ],
+        availableExtras: [
+            {name: 'Shake Proteico', price: 60},
+            {name: 'Kit de Vitaminas', price: 80},
+        ],
+      }
+    
   ];
-  const addToCart = (basket) => {
-    setCart([...cart, basket]);
+
+
+  const filteredBaskets = baskets.filter(
+    (basket) =>
+      basket.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      basket.description.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const [highlightedIndex, setHighlightedIndex] = useState(0);
+  const nextBasket = () => {
+    setHighlightedIndex((prevIndex) => (prevIndex + 1) % baskets.length);
   };
-  const removeFromCart = (index) => {
-    const updateCart = [...cart];
-    updateCart.splice(index, 1);
-    setCart(updateCart);
+  const prevBasket = () => {
+    setHighlightedIndex((prevIndex) => (prevIndex - 1 + baskets.length) % baskets.length);
   };
+
   return (
-
-
-    <div className="bg-gray-100 min-h-screen">
-  <main className="max-w-6xl mx-auto p-4">
-  <div className="flex justify-between items-center mt-3 py-4">
-      <h1 className="text-2xl font-bold m-0 p-2">Cestas de Presente</h1>
-      <div className="div-search">
-      <input
-          type="text"
-          placeholder="Buscar cestas..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="search-bar p-2 border rounded"
-      />
-
-      <button><i className="bi bi-search"></i></button>
-      </div>
-  </div>
-
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {baskets.map(basket => (
-          <div key={basket.id} className="bg-white rounded-lg shadow-lg p-4">
-              <h3 className="text-lg font-semibold">{basket.name}</h3>
-              <p>{basket.description}</p>
-              <p className="text-lg font-bold mt-2">R$ {basket.price.toFixed(2)}</p>
-              <button
-                  onClick={() => addToCart(basket)}
-                  className="mt-2 bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600"
-              >
-                  Adicionar ao Carrinho
-              </button>
+    <div className="fundo min-h-screen">
+      <main className="max-w-6xl mx-auto p-4">
+        <div className="flex justify-between items-center mt-3 py-4">
+          <h1 className="text-2xl font-bold m-0 p-2">Cestas de Presente</h1>
+          <div className="div-search flex gap-2">
+            <input
+              type="text"
+              placeholder="Buscar cestas..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-bar p-2 border rounded"
+            />
+            <button><i className="bi bi-search"></i></button>
           </div>
-      ))}
-  </div>
+        </div>
 
-  {showCart && (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-end">
-          <div className="bg-white w-96 p-6">
-              <h2 className="text-2xl font-bold mb-4">Carrinho</h2>
-              {cart.length === 0 ? (
-                  <p>Seu carrinho está vazio</p>
-              ) : (
-                  cart.map((item, index) => (
-                      <div key={index} className="p-4 border-b">
-                          <h3 className="font-semibold">{item.name}</h3>
-                          <button
-                              onClick={() => removeFromCart(index)}
-                              className="text-red-500 mt-2"
-                          >
-                              Remover
-                          </button>
-                      </div>
-                  ))
-              )}
-              <button
-                  onClick={() => setShowCart(false)}
-                  className="mt-4 bg-gray-500 text-white px-4 py-2 rounded"
-              >
-                  Fechar
-              </button>
+        {/* Carrossel de Cesta em Destaque */}
+        <div className="max-w-6xl mx-auto px-4 my-8">
+          <div className="highlighted-basket p-4 rounded-lg shadow-md bg-white text-center">
+            <h3 className="text-lg font-semibold mb-2">
+              Cesta em Destaque: {baskets[highlightedIndex].name}
+            </h3>
+            <p>{baskets[highlightedIndex].description}</p>
+            <p className="text-lg font-bold mt-2">R$ {baskets[highlightedIndex].price.toFixed(2)}</p>
+            <button
+              onClick={() => addToCart(baskets[highlightedIndex])}
+              className="mt-2 bg-pink-500 text-white px-4 py-2 rounded-lg hover:bg-pink-600 transition duration-200"
+            >
+              Adicionar ao Carrinho
+            </button>
+            <div className="flex justify-center gap-4 mt-4">
+              <button onClick={prevBasket} className="text-pink-500 text-lg font-bold">{'<'}</button>
+              <button onClick={nextBasket} className="text-pink-500 text-lg font-bold">{'>'}</button>
+            </div>
           </div>
-      </div>
-  )}
-</main>
-</div>
-);
-}
+        </div>
+
+        {/* Exibição das Cestas Filtradas */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredBaskets.length > 0 ? (
+            filteredBaskets.map((basket) => (
+              <CardCesta
+                key={basket.id}
+                basket={basket}
+                addToCart={addToCart}
+              />
+            ))
+          ) : (
+            <p className="text-center col-span-3 text-gray-500">Nenhuma cesta encontrada.</p>
+          )}
+        </div>
+      </main>
+    </div>
+  );
+};
 
 export default Home;

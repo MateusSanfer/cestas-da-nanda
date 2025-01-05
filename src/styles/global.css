@@ -11,11 +11,13 @@ body {
   margin-top: 70px;
   padding: 0;
   box-sizing: border-box;
+  background: #7a6b2b44;
 }
 
 :root{
   --letras-logo: #FFDE59;
   --fundo-logo: #161A1A;
+  --hover-botao: #eb5cc9;
 }
 
 .fade-enter-active, .fade-leave-active {
@@ -114,7 +116,14 @@ h1{
   font-size: 24px;
   font-weight: 700;
 }
-
+h4{
+  font-size: 15px;
+}
+.total{
+  font-size: 1rem;
+  margin-right: 3px;
+  justify-content: space-around;
+}
 .rodape{
   background-color: var(--fundo-logo);
   padding: 10px;
@@ -131,4 +140,11 @@ h1{
   }
 }
 
-
+.botaoAdd{
+  background-color: #e2c522;
+  font-weight: bold;
+  font-size: 15px;
+}
+.botaoAdd:hover{ 
+  background: var(--hover-botao)
+}
