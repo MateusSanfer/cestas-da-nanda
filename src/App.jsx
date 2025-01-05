@@ -24,32 +24,33 @@ function App() {
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
-        setUser(user);
+      setUser(user);
     });
     return () => unsubscribe();
-}, []);
+  }, []);
 
   return (
     <Router>
       {/* Passa as props relacionadas ao carrinho para o Header */}
-      <Header 
-        cart={cart} 
-        setCart={setCart} 
-        addToCart={addToCart} 
-        removeFromCart={removeFromCart} 
+      <Header
+        cart={cart}
+        setCart={setCart}
+        addToCart={addToCart}
+        removeFromCart={removeFromCart}
       />
       <Routes>
+        <Route path="/login" element={<Login />} />
         {/* Passa addToCart para Home */}
-        <Route 
-          path="/" 
-          element={<Home addToCart={addToCart} />} 
+        <Route
+          path="/"
+          element={<Home addToCart={(item) => setCart([...cart, item])} />}
         />
         <Route path="/sobre" element={<Sobre />} />
         <Route path="/confirmacao" element={<Confirmacao />} />
-        <Route path="/pagamento" element={user ? <Pagamento cart={cart} /> : <Navigate to="/login" />} />
-           
-
-        <Route path="/login" element={<Login />} />
+        <Route
+          path="/pagamento"
+          element={user ? <Pagamento cart={cart} /> : <Navigate to="/login" />}
+        />
       </Routes>
     </Router>
   );
