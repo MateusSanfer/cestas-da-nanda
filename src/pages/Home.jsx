@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import CardCesta from "../components/CardCesta"; // Importa o componente CardCesta
-
+import foto from "../assets/images/foto4.jpg";
 const Home = ({ addToCart }) => {
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -130,24 +130,30 @@ const Home = ({ addToCart }) => {
         </div>
 
         {/* Carrossel de Cesta em Destaque */}
-        <div className="max-w-6xl mx-auto px-4 my-8">
-          <div className="highlighted-basket p-4 rounded-lg shadow-md bg-white text-center">
-            <h3 className="text-lg font-semibold mb-2">
-              Cesta em Destaque: {baskets[highlightedIndex].name}
-            </h3>
-            <p>{baskets[highlightedIndex].description}</p>
-            <p className="text-lg font-bold mt-2">R$ {baskets[highlightedIndex].price.toFixed(2)}</p>
-            <button
-              onClick={() => addToCart(baskets[highlightedIndex])}
-              className="mt-2 bg-pink-500 text-white px-4 py-2 rounded-lg hover:bg-pink-600 transition duration-200"
-            >
-              Adicionar ao Carrinho
-            </button>
+        <div className="max-w-6x1 mx-auto px-4 my-6 ">
+          <div className="highlighted-basket p-4 rounded-lg shadow-md bg-white text-center flex justify-between items-center">
+            <div className="text-center flex justify-between items-center p-4 gap-5">
+              <div>
+                <h3 className="text-lg font-semibold mb-2">
+                  Cesta em Destaque: {baskets[highlightedIndex].name}
+                </h3>
+                <p>{baskets[highlightedIndex].description}</p>
+                <p className="text-lg font-bold mt-2">R$ {baskets[highlightedIndex].price.toFixed(2)}</p>
+              </div>
+            </div>
+              <button
+                onClick={() => addToCart(baskets[highlightedIndex])}
+                className="mt-2 bg-pink-500 text-white px-4 py-2 rounded-lg hover:bg-pink-600 transition duration-200"
+              >
+                Adicionar ao Carrinho
+              </button>
+            <div><img src={foto} alt="" className="foto"/></div>
+          </div>
             <div className="flex justify-center gap-4 mt-4">
               <button onClick={prevBasket} className="text-pink-500 text-lg font-bold">{'<'}</button>
               <button onClick={nextBasket} className="text-pink-500 text-lg font-bold">{'>'}</button>
             </div>
-          </div>
+          
         </div>
 
         {/* Exibição das Cestas Filtradas */}

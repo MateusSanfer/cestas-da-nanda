@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import logo from '../assets/images/logo.png'
+import { useNavigate } from "react-router-dom";
 
 function Header({ cart = [], setCart }) {
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const navigate = useNavigate();
 
   const toggleCart = () => {
     setIsCartOpen(!isCartOpen);
@@ -16,27 +18,12 @@ function Header({ cart = [], setCart }) {
     setCart(updatedCart);
   };
 
-  const addToCart = (basket) => {
-    const existingItemIndex = cart.findIndex((item) => item.id === basket.id);
-
-    if (existingItemIndex > -1) {
-      // Se o item já estiver no carrinho, podemos atualizar a quantidade e o total
-      const updatedCart = [...cart];
-      updatedCart[existingItemIndex].includedExtraItems = basket.includedExtraItems;
-      updatedCart[existingItemIndex].total = basket.total; // Atualiza o total
-      setCart(updatedCart);
-    } else {
-      // Caso contrário, adiciona um novo item ao carrinho
-      setCart([...cart, basket]);
-    }
-  };
-
   const checkout = () => {
     if (cart.length === 0) {
       alert("Seu carrinho está vazio!");
       return;
     }
-    alert("Implementar checkout aqui!");
+    navigate("/pagamento");
   };
 
   return (
@@ -60,9 +47,6 @@ function Header({ cart = [], setCart }) {
                 </Link>
                 <Link to="/sobre" className="hover:text-yellow-400">
                   Sobre
-                </Link>
-                <Link to="/contato" className="hover:text-yellow-400">
-                  Contato
                 </Link>
                 <Link to="/pagamento" className="hover:text-yellow-400">
                   Pagamento

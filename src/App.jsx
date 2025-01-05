@@ -1,14 +1,16 @@
-import React, { useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Header from './components/Header';
 import Home from './pages/Home';
 import Sobre from './pages/Sobre';
-import Contato from './pages/Contato';
+import Confirmacao from './pages/Confirmacao';
 import Pagamento from './pages/Pagamento';
 import Login from './pages/Login';
+import { auth } from "./config/firebaseConfig";
 
 function App() {
   const [cart, setCart] = useState([]); // Gerenciar o estado do carrinho aqui
+  const [user, setUser] = useState(null);
 
   // Função para adicionar itens ao carrinho
   const addToCart = (item) => {
@@ -19,6 +21,13 @@ function App() {
   const removeFromCart = (itemId) => {
     setCart((prevCart) => prevCart.filter((item) => item.id !== itemId));
   };
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+        setUser(user);
+    });
+    return () => unsubscribe();
+}, []);
 
   return (
     <Router>
@@ -36,8 +45,10 @@ function App() {
           element={<Home addToCart={addToCart} />} 
         />
         <Route path="/sobre" element={<Sobre />} />
-        <Route path="/contato" element={<Contato />} />
-        <Route path="/pagamento" element={<Pagamento />} />
+        <Route path="/confirmacao" element={<Confirmacao />} />
+        <Route path="/pagamento" element={user ? <Pagamento cart={cart} /> : <Navigate to="/login" />} />
+           
+
         <Route path="/login" element={<Login />} />
       </Routes>
     </Router>
