@@ -125,7 +125,9 @@ const Home = ({ addToCart }) => {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="search-bar p-2 border rounded"
             />
-            <button><i className="bi bi-search"></i></button>
+            <button>
+              <i className="bi bi-search"></i>
+            </button>
           </div>
         </div>
 
@@ -138,22 +140,35 @@ const Home = ({ addToCart }) => {
                   Cesta em Destaque: {baskets[highlightedIndex].name}
                 </h3>
                 <p>{baskets[highlightedIndex].description}</p>
-                <p className="text-lg font-bold mt-2">R$ {baskets[highlightedIndex].price.toFixed(2)}</p>
+                <p className="text-lg font-bold mt-2">
+                  R$ {baskets[highlightedIndex].price.toFixed(2)}
+                </p>
               </div>
             </div>
-              <button
-                onClick={() => addToCart(baskets[highlightedIndex])}
-                className="mt-2 bg-pink-500 text-white px-4 py-2 rounded-lg hover:bg-pink-600 transition duration-200"
-              >
-                Adicionar ao Carrinho
-              </button>
-            <div><img src={foto} alt="" className="foto"/></div>
-          </div>
-            <div className="flex justify-center gap-4 mt-4">
-              <button onClick={prevBasket} className="text-pink-500 text-lg font-bold">{'<'}</button>
-              <button onClick={nextBasket} className="text-pink-500 text-lg font-bold">{'>'}</button>
+            <button
+              onClick={() => addToCart(baskets[highlightedIndex])}
+              className="mt-2 bg-pink-500 text-white px-4 py-2 rounded-lg hover:bg-pink-600 transition duration-200"
+            >
+              Adicionar ao Carrinho
+            </button>
+            <div>
+              <img src={foto} alt="" className="foto" />
             </div>
-          
+          </div>
+          <div className="flex justify-center gap-4 mt-4">
+            <button
+              onClick={prevBasket}
+              className="text-pink-500 text-lg font-bold"
+            >
+              {"<"}
+            </button>
+            <button
+              onClick={nextBasket}
+              className="text-pink-500 text-lg font-bold"
+            >
+              {">"}
+            </button>
+          </div>
         </div>
 
         {/* Exibição das Cestas Filtradas */}
@@ -167,7 +182,9 @@ const Home = ({ addToCart }) => {
               />
             ))
           ) : (
-            <p className="text-center col-span-3 text-gray-500">Nenhuma cesta encontrada.</p>
+            <p className="text-center col-span-3 text-gray-500">
+              Nenhuma cesta encontrada.
+            </p>
           )}
         </div>
       </main>

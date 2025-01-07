@@ -1,7 +1,9 @@
-// src/pages/Pagamento.jsx
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { db } from "../config/firebaseConfig";
+import { addDoc, collection, doc, setDoc } from "firebase/firestore";
+import { auth } from "../config/firebaseConfig";
 
 function Pagamento({ cart }) {
     const [cep, setCep] = useState("");
@@ -10,11 +12,15 @@ function Pagamento({ cart }) {
         bairro: "",
         cidade: "",
         estado: "",
+        numero: "",
     });
     const [paymentMethod, setPaymentMethod] = useState("");
+    const [qrCodeUrl, setQrCodeUrl] = useState("");
+    const [boletoCode, setBoletoCode] = useState("");
     const navigate = useNavigate();
 
-    // Função para buscar o endereço pelo CEP usando a API do ViaCEP
+    const user = auth.currentUser;
+
     const fetchAddress = async () => {
         if (cep.length === 8) {
             try {
@@ -25,6 +31,7 @@ function Pagamento({ cart }) {
                     return;
                 }
                 setAddress({
+                    ...address,
                     rua: data.logradouro,
                     bairro: data.bairro,
                     cidade: data.localidade,
@@ -38,17 +45,61 @@ function Pagamento({ cart }) {
         }
     };
 
-    // Calcular o total do carrinho
     const total = cart.reduce((acc, item) => acc + item.price, 0).toFixed(2);
 
-    // Função para finalizar o pedido
-    const handleOrder = () => {
+    const saveToFirestore = async () => {
+        if (!user) {
+            alert("Você precisa estar logado para finalizar a compra.");
+            return;
+        }
+
+        try {
+            await addDoc(collection(db, "Pedidos"), {
+                endereco: { cep, ...address },
+                pagamento: paymentMethod,
+                total: parseFloat(total),
+                items: cart,
+                usuario: user.uid,
+                data: new Date(),
+            });
+            alert("Pedido salvo com sucesso!");
+        } catch (error) {
+            console.error("Erro ao salvar no Firestore:", error);
+            alert("Erro ao salvar os dados. Tente novamente.");
+        }
+    };
+
+    const generatePixQrCode = () => {
+        const pixData = `00020126...5204000053039865802BR5913Cestas Da Nanda...TXID12345678`;
+        const encodedPix = encodeURIComponent(pixData);
+        setQrCodeUrl(`https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=${encodedPix}`);
+    };
+
+    const generateBoletoCode = () => {
+        const dummyCode = "34191.79001 01043.510047 91020.150008 3 89240000001500";
+        setBoletoCode(dummyCode);
+    };
+
+    const handleOrder = async () => {
         if (!paymentMethod || !cep) {
             alert("Preencha todos os campos antes de finalizar a compra.");
             return;
         }
-        alert("Pedido realizado com sucesso!");
-        navigate("/confirmacao");
+
+        try {
+            await saveToFirestore();
+
+            if (paymentMethod === "pix") {
+                generatePixQrCode();
+            } else if (paymentMethod === "boleto") {
+                generateBoletoCode();
+            } else {
+                alert("Pedido realizado com sucesso!");
+                navigate("/confirmacao");
+            }
+        } catch (error) {
+            alert("Erro ao processar o pedido: " + error.message);
+        }
     };
 
     return (
@@ -66,8 +117,8 @@ function Pagamento({ cart }) {
                         maxLength="8"
                         className="w-full p-2 border rounded"
                     />
-                    <button 
-                        type="button" 
+                    <button
+                        type="button"
                         onClick={fetchAddress}
                         className="mt-2 bg-blue-500 text-white px-4 py-2 rounded"
                     >
@@ -83,6 +134,15 @@ function Pagamento({ cart }) {
                         value={address.rua}
                         readOnly
                         className="w-full p-2 border rounded bg-gray-100"
+                    />
+
+                    {/* Adicione campo para número */}
+                    <label className="block font-medium mt-2">Número</label>
+                    <input
+                        type="text"
+                        value={address.numero}
+                        onChange={(e) => setAddress({ ...address, numero: e.target.value })}
+                        className="w-full p-2 border rounded"
                     />
 
                     <label className="block font-medium mt-2">Bairro</label>
@@ -138,9 +198,24 @@ function Pagamento({ cart }) {
                 >
                     Finalizar Compra
                 </button>
+
+                {/* Exibição de QR Code ou Boleto */}
+                {paymentMethod === "pix" && qrCodeUrl && (
+                    <div className="mt-4">
+                        <h3 className="text-lg font-medium">QR Code para Pix</h3>
+                        <img src={qrCodeUrl} alt="QR Code Pix" />
+                    </div>
+                )}
+
+                {paymentMethod === "boleto" && boletoCode && (
+                    <div className="mt-4">
+                        <h3 className="text-lg font-medium">Código de Barras para Boleto</h3>
+                        <p>{boletoCode}</p>
+                    </div>
+                )}
             </div>
         </div>
     );
-}
 
+}
 export default Pagamento;
