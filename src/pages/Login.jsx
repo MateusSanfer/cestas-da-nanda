@@ -40,7 +40,7 @@ function Login() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="login min-h-screen flex items-center justify-center ">
             <form
                 onSubmit={handleAuth}
                 className="p-8 bg-white rounded-xl shadow-lg max-w-sm w-full"

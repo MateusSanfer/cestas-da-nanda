@@ -28,6 +28,8 @@ const CardCesta = ({ basket, addToCart }) => {
     }
   };
 
+  
+
   const removeExtra = (index) => {
     const updatedItems = [...includedExtraItems];
     updatedItems.splice(index, 1);
@@ -42,12 +44,15 @@ const CardCesta = ({ basket, addToCart }) => {
     return basket.price + extrasTotal;
   };
 
+
+
   const handleAddToCart = () => {
     const basketWithExtras = {
       ...basket,
-      includedExtraItems,
+      includedExtraItems: [...includedExtraItems],
       total: calculateTotal(),
     };
+    
     addToCart(basketWithExtras);
   };
 
@@ -80,7 +85,7 @@ const CardCesta = ({ basket, addToCart }) => {
     </ul>
 
     <select
-      value={selectedExtra || ""}
+      value={selectedExtra ? JSON.stringify(selectedExtra) :""}
       onChange={(e) =>
         setSelectedExtra(JSON.parse(e.target.value || null))
       }

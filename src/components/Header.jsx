@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import logo from '../assets/images/logo.png'
+import logo from "../assets/images/logo.png";
 import { useNavigate } from "react-router-dom";
 
 function Header({ cart = [], setCart }) {
@@ -11,11 +11,24 @@ function Header({ cart = [], setCart }) {
     setIsCartOpen(!isCartOpen);
   };
 
-  const cartTotal = cart.reduce((total, item) => total + item.price, 0);
+  const cartTotal = cart.reduce((total, item) => {
+    const extrasTotal = item.includedExtraItems
+      ? item.includedExtraItems.reduce(
+          (sum, extra) => sum + extra.price * extra.count,
+          0
+        )
+      : 0;
+
+    return total + item.price + extrasTotal;
+  }, 0);
 
   const removeFromCart = (item) => {
     const updatedCart = cart.filter((cartItem) => cartItem.id !== item.id);
     setCart(updatedCart);
+  };
+
+ const calcularTotalExtras = (includedExtraItems = []) => {
+    return includedExtraItems.reduce((sum, extra) => sum + extra.price * extra.count, 0);
   };
 
   const checkout = () => {
@@ -23,8 +36,16 @@ function Header({ cart = [], setCart }) {
       alert("Seu carrinho está vazio!");
       return;
     }
-    navigate("/pagamento");
+
+    // Calcula o total com os itens adicionais
+    const cartTotal = cart.reduce((total, item) => {
+      return total + item.price + calcularTotalExtras(item.includedExtraItems);
+    }, 0);
+
+    // Redireciona para a página de pagamento passando o total correto
+    navigate("/pagamento", { state: { cartTotal } });
   };
+
 
   return (
     <>
@@ -34,7 +55,9 @@ function Header({ cart = [], setCart }) {
             <div className="flex justify-between items-center py-4">
               {/* Logo */}
               <div className="flex items-center">
-                <img src={logo} alt="Logo Cestas Da Nanda"
+                <img
+                  src={logo}
+                  alt="Logo Cestas Da Nanda"
                   className="h-10 w-10"
                 />
                 <span className="text-xl font-bold ml-2">Cestas Da Nanda</span>
@@ -119,7 +142,7 @@ function Header({ cart = [], setCart }) {
                       </ul>
                       <div className="flex justify-between items-center mt-2">
                         <p className="text-gray-600">
-                          R$ {item.price.toFixed(2)}
+                          R$ {(item.price + calcularTotalExtras(item.includedExtraItems)).toFixed(2)}
                         </p>
                         <button
                           onClick={() => removeFromCart(item)}

@@ -7,16 +7,17 @@ function Pagamento({ cart }) {
     const [cep, setCep] = useState("");
     const [address, setAddress] = useState({
         rua: "",
+        numero: "",
         bairro: "",
         cidade: "",
         estado: "",
     });
     const [paymentMethod, setPaymentMethod] = useState("");
     const navigate = useNavigate();
-
+    
     // Função para buscar o endereço pelo CEP usando a API do ViaCEP
     const fetchAddress = async () => {
-        if (cep.length === 8) {
+        if (cep.length === 8 ) {
             try {
                 const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
                 const data = response.data;
@@ -26,6 +27,7 @@ function Pagamento({ cart }) {
                 }
                 setAddress({
                     rua: data.logradouro,
+                    numero: data.numero,
                     bairro: data.bairro,
                     cidade: data.localidade,
                     estado: data.uf,
@@ -39,7 +41,14 @@ function Pagamento({ cart }) {
     };
 
     // Calcular o total do carrinho
-    const total = cart.reduce((acc, item) => acc + item.price, 0).toFixed(2);
+    const total = cart.reduce((acc, item) => {
+        // Calcula o total dos extras
+        const extrasTotal = item.includedExtraItems
+            ? item.includedExtraItems.reduce((sum, extra) => sum + extra.price * extra.count, 0)
+            : 0;
+    
+        return acc + item.price + extrasTotal;
+    }, 0).toFixed(2);
 
     // Função para finalizar o pedido
     const handleOrder = () => {
@@ -82,6 +91,15 @@ function Pagamento({ cart }) {
                         type="text"
                         value={address.rua}
                         readOnly
+                        className="w-full p-2 border rounded bg-gray-100"
+                    />
+
+
+                    <label className="block font-medium">Numero</label>
+                    <input
+                        type="text"
+                        value={address.numero}
+                        onChange={(e) => setAddress({ ...address, numero: e.target.value })}
                         className="w-full p-2 border rounded bg-gray-100"
                     />
 
