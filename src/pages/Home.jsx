@@ -1,102 +1,97 @@
 import React, { useState } from "react";
 import CardCesta from "../components/CardCesta"; // Importa o componente CardCesta
 import foto from "../assets/images/foto4.jpg";
-const Home = ({ addToCart }) => {
+import { Link } from "react-router-dom";
 
+const Home = ({ addToCart }) => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const baskets = [
     {
-        id: 1,
-        name: 'Cesta Café da Manhã',
-        description: 'Deliciosa cesta com pães, frutas e café',
-        price: 130.00,
-        includedItems: [
-          '4 Biscoitos salgados',
-          '1 Barra de Cereal',
-          '1 Bolinho',
-          '1 Sachê de café ',
-          '2 Geleias ',
-          '1 Pão de mel',
-          '2 chocolates ',
-          '1 Achocolatado',
-          '1 Iogurte',
-          '1 Fruta',
-          '1 Torrada',
-          '1 Pão com frios',
-          '1 Sucrilhos',
-        ],
-        availableExtras: [
-          { name: 'Caixa em MDF + 1 xícara + 1 Balão', price: 50 },
-          { name: '1 Balão', price: 20 }
-        ],
-        selectedExtras: null,
-        includedExtraItems: []
-      },
- 
+      id: 1,
+      name: "Cesta Café da Manhã",
+      description: "Deliciosa cesta com pães, frutas e café",
+      price: 130.0,
+      includedItems: [
+        "4 Biscoitos salgados",
+        "1 Barra de Cereal",
+        "1 Bolinho",
+        "1 Sachê de café ",
+        "2 Geleias ",
+        "1 Pão de mel",
+        "2 chocolates ",
+        "1 Achocolatado",
+        "1 Iogurte",
+        "1 Fruta",
+        "1 Torrada",
+        "1 Pão com frios",
+        "1 Sucrilhos",
+      ],
+      availableExtras: [
+        { name: "Caixa em MDF + 1 xícara + 1 Balão", price: 50 },
+        { name: "1 Balão", price: 20 },
+      ],
+      selectedExtras: null,
+      includedExtraItems: [],
+    },
+
     {
-        id: 2,
-        name: 'Cesta Com Amor',
-        description: 'Cesta especial com chocolates e vinho',
-        price: 44.99,
-        includedItems: [
-        'Cesta',
-        '1 Mini vinho',
-        '1 Taça ',
-        '1 Kit Kat',
-        'Chocolates',
-
-        ],
-        availableExtras: [
-          { name: 'Ursinho com tolha de rosto', price: 15 },
-        
-        ],
-        selectedExtras: null,
-        includedExtraItems: []
-      },
-      {
-        id: 3,
-        name: 'Cesta Gourmet',
-        description: 'Seleção de queijos e frios premium',
-        price: 194.99,
-        includedItems: [
-        'Panetone 400g',
-        'Vinho 750ml',
-        'Taça', 
-        'Batata frita',
-        'Snacks',
-        'Chocolates',
-        'Waffers',
-        'Barrinha de cereal', 
-        'Mix passas',
-        'Cappuccino',
-        ],
-        availableExtras: [
-          { name: 'Creme de avelã', price: 14.99},
-          { name: 'Mini petisqueira de frios', price: 89.90 }
-        ],
-        selectedExtras: null,
-        includedExtraItems: []
-      },
-      {
-        id: 4,
-        name: 'Cesta Fitness',
-        description: 'Cesta com alimentos saudaváveis e nutritivos',
-        price: 179.90,
-        includedItems: [
-            'Frutas diversas', 
-            '2 Barrinhas de Cereal', 
-            'Suco Detox',
-            'Whey Protein 500g'
-        ],
-        availableExtras: [
-            {name: 'Shake Proteico', price: 60},
-            {name: 'Kit de Vitaminas', price: 80},
-        ],
-      }
-    
+      id: 2,
+      name: "Cesta Com Amor",
+      description: "Cesta especial com chocolates e vinho",
+      price: 44.99,
+      includedItems: [
+        "Cesta",
+        "1 Mini vinho",
+        "1 Taça ",
+        "1 Kit Kat",
+        "Chocolates",
+      ],
+      availableExtras: [{ name: "Ursinho com tolha de rosto", price: 15 }],
+      selectedExtras: null,
+      includedExtraItems: [],
+    },
+    {
+      id: 3,
+      name: "Cesta Gourmet",
+      description: "Seleção de queijos e frios premium",
+      price: 194.99,
+      includedItems: [
+        "Panetone 400g",
+        "Vinho 750ml",
+        "Taça",
+        "Batata frita",
+        "Snacks",
+        "Chocolates",
+        "Waffers",
+        "Barrinha de cereal",
+        "Mix passas",
+        "Cappuccino",
+      ],
+      availableExtras: [
+        { name: "Creme de avelã", price: 14.99 },
+        { name: "Mini petisqueira de frios", price: 89.9 },
+      ],
+      selectedExtras: null,
+      includedExtraItems: [],
+    },
+    {
+      id: 4,
+      name: "Cesta Fitness",
+      description: "Cesta com alimentos saudaváveis e nutritivos",
+      price: 179.9,
+      includedItems: [
+        "Frutas diversas",
+        "2 Barrinhas de Cereal",
+        "Suco Detox",
+        "Whey Protein 500g",
+      ],
+      availableExtras: [
+        { name: "Shake Proteico", price: 60 },
+        { name: "Kit de Vitaminas", price: 80 },
+      ],
+    },
   ];
-
 
   const filteredBaskets = baskets.filter(
     (basket) =>
@@ -109,7 +104,13 @@ const Home = ({ addToCart }) => {
     setHighlightedIndex((prevIndex) => (prevIndex + 1) % baskets.length);
   };
   const prevBasket = () => {
-    setHighlightedIndex((prevIndex) => (prevIndex - 1 + baskets.length) % baskets.length);
+    setHighlightedIndex(
+      (prevIndex) => (prevIndex - 1 + baskets.length) % baskets.length
+    );
+  };
+
+  const generateSlug = (name, id) => {
+    return `${id}-${name.toLowerCase().replace(/\s+/g, "-")}`;
   };
 
   return (
@@ -147,7 +148,7 @@ const Home = ({ addToCart }) => {
             </div>
             <button
               onClick={() => addToCart(baskets[highlightedIndex])}
-              className="mt-2 bg-pink-500 text-white px-4 py-2 rounded-lg hover:bg-pink-600 transition duration-200"
+              className="botaoAdd mt-2 text-white px-4 py-2 rounded-lg transition duration-200"
             >
               Adicionar ao Carrinho
             </button>
@@ -175,11 +176,12 @@ const Home = ({ addToCart }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredBaskets.length > 0 ? (
             filteredBaskets.map((basket) => (
-              <CardCesta
+              <Link
+                to={`/cesta/${generateSlug(basket.name, basket.id)}`}
                 key={basket.id}
-                basket={basket}
-                addToCart={addToCart}
-              />
+              >
+                <CardCesta basket={basket} addToCart={addToCart} />
+              </Link>
             ))
           ) : (
             <p className="text-center col-span-3 text-gray-500">
