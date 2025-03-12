@@ -1,25 +1,42 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
+import Footer from "../components/Footer";
 
 const DetalhesCesta = ({ addToCart, baskets }) => {
-  const { id } = useParams();
-  const basketId = parseInt(id.split("-")[0]); // Pega só o número antes do "-"
-const basket = baskets.find((b) => b.id === basketId);
+  const { slug } = useParams();
+  console.log("Slug recebido:", slug); // Teste no console
 
+  // Separar o ID do nome
+  const id = slug.split("id")[0];
+  console.log("ID extraído:", id); // Teste no console
+
+  // Buscar a cesta pelo ID
+  const basket = baskets.find((b) => b.id.toString() === id);
 
   const [selectedExtra, setSelectedExtra] = useState(null);
-  const [includedExtraItems, setIncludedExtraItems] = useState(basket.includedExtraItems || []);
+  const [includedExtraItems, setIncludedExtraItems] = useState(
+    basket?.includedExtraItems || []
+  );
+  const [imagemPrincipal, setImagemPrincipal] = useState(basket.image);
 
+  if (!basket) {
+    return <div className="p-6 text-2xl mt-5">Cesta não encontrada.</div>; //Alterar isso para que fique visivel
+  }
   const addExtra = () => {
     if (selectedExtra) {
-      const existingExtraIndex = includedExtraItems.findIndex((item) => item.name === selectedExtra.name);
+      const existingExtraIndex = includedExtraItems.findIndex(
+        (item) => item.name === selectedExtra.name
+      );
 
       if (existingExtraIndex > -1) {
         const updatedItems = [...includedExtraItems];
         updatedItems[existingExtraIndex].count += 1;
         setIncludedExtraItems(updatedItems);
       } else {
-        setIncludedExtraItems([...includedExtraItems, { ...selectedExtra, count: 1 }]);
+        setIncludedExtraItems([
+          ...includedExtraItems,
+          { ...selectedExtra, count: 1 },
+        ]);
       }
       setSelectedExtra(null);
     }
@@ -32,7 +49,10 @@ const basket = baskets.find((b) => b.id === basketId);
   };
 
   const calculateTotal = () => {
-    const extrasTotal = includedExtraItems.reduce((total, item) => total + item.price * item.count, 0);
+    const extrasTotal = includedExtraItems.reduce(
+      (total, item) => total + item.price * item.count,
+      0
+    );
     return basket.price + extrasTotal;
   };
 
@@ -47,54 +67,88 @@ const basket = baskets.find((b) => b.id === basketId);
   };
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">{basket.name}</h2>
-      <p className="text-gray-700">{basket.description}</p>
-      <h3 className="text-lg font-semibold mt-4">Itens Inclusos:</h3>
-      <ul className="list-disc list-inside">
-        {basket.includedItems.map((item, index) => (
-          <li key={index}>{item}</li>
-        ))}
-      </ul>
+    <>
+      <div className="detalhes-container">
+        {/* Imagens da cesta */}
+        <div className="imagens">
+          <img
+            src={imagemPrincipal}
+            alt={basket.name}
+            className="imagem-principal"
+          />
+          <div className="miniaturas">
+            {(basket.images || []).map((img, index) => (
+              <img
+                key={index}
+                src={img}
+                alt="Miniatura"
+                className="miniatura cursor-pointer"
+                onClick={() => setImagemPrincipal(img)} // Troca a imagem ao clicar
+              />
+            ))}
+          </div>
+        </div>
 
-      <select
-        value={selectedExtra ? JSON.stringify(selectedExtra) : ""}
-        onChange={(e) => setSelectedExtra(JSON.parse(e.target.value || null))}
-        className="border px-2 py-1 rounded w-full mt-2"
-      >
-        <option value="">Selecione um extra</option>
-        {basket.availableExtras.map((extra, index) => (
-          <option key={index} value={JSON.stringify(extra)}>
-            {extra.name} - R$ {extra.price.toFixed(2)}
-          </option>
-        ))}
-      </select>
-      <button onClick={addExtra} className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 mt-2">
-        Adicionar Extra
-      </button>
+        <div className="detalhes">
+          <h2 className="titulo">{basket.name}</h2>
+          <h3 className="font-bold">Itens Inclusos:</h3>
+          <ul>
+            {basket.includedItems.map((item, index) => (
+              <li key={index}>{item}</li>
+            ))}
+          </ul>
+          {/* Adicionar Itens Extras */}
+          <label>Adicionar Itens Extras:</label>
+          <select
+            value={selectedExtra ? JSON.stringify(selectedExtra) : ""}
+            onChange={(e) =>
+              setSelectedExtra(JSON.parse(e.target.value || null))
+            }
+            className="select-extra"
+          >
+            <option value="">Selecione um extra</option>
+            {basket.availableExtras.map((extra, index) => (
+              <option key={index} value={JSON.stringify(extra)}>
+                {extra.name} - R$ {extra.price.toFixed(2)}
+              </option>
+            ))}
+          </select>
+          <button onClick={addExtra} className="botao-extra">
+            Adicionar
+          </button>
 
-      <h3 className="text-lg font-semibold mt-4">Itens Extras Adicionados:</h3>
-      <ul className="list-disc list-inside text-sm text-gray-600">
-        {includedExtraItems.map((extra, index) => (
-          <li key={index} className="flex justify-between items-center">
-            <span>
-              {extra.name} ({extra.count})
-            </span>
-            <span className="text-gray-600">R$ {(extra.price * extra.count).toFixed(2)}</span>
-            <button onClick={() => removeExtra(index)} className="text-red-500 ml-4">
-              Remover
+          {/* Itens Extras Adicionados */}
+          <h3>Itens Extras Adicionados:</h3>
+          <ul className="lista-extras">
+            {includedExtraItems.map((extra, index) => (
+              <li key={index} className="extra-item">
+                <span>
+                  {extra.name} ({extra.count})
+                </span>
+                <span>R$ {(extra.price * extra.count).toFixed(2)}</span>
+                <button
+                  onClick={() => removeExtra(index)}
+                  className="remover-extra"
+                >
+                  Remover
+                </button>
+              </li>
+            ))}
+          </ul>
+          {/* Preço e botão adicionar ao carrinho */}
+          <div className="preco-carrinho">
+            <span className="preco">R$ {calculateTotal().toFixed(2)}</span>
+            <button onClick={handleAddToCart} className="botao-carrinho">
+              <i className="bi bi-cart"></i> Adicionar ao carrinho
             </button>
-          </li>
-        ))}
-      </ul>
-
-      <div className="flex justify-between items-center mt-4">
-        <span className="total font-bold">Total: R$ {calculateTotal().toFixed(2)}</span>
-        <button onClick={handleAddToCart} className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">
-          Adicionar ao Carrinho
-        </button>
+          </div>
+        </div>
+        <div>
+          <p className="text-gray-700">{basket.description}</p>
+        </div>
       </div>
-    </div>
+      <Footer />
+    </>
   );
 };
 

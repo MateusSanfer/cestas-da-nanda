@@ -7,16 +7,16 @@
 @import url("https://fonts.googleapis.com/css2?family=Krona+One&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
 
 /* Bootstrap Icons */
-@import url('https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css');
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css");
 
 :root {
   --cor-primaria: #feffe5;
-  --cor-secundaria: #FFE893;
+  --cor-secundaria: #ffe893;
   --cor-terciaria: #ff7e64;
-  --cor-hover: #FB9EC6;
+  --cor-hover: #fb9ec6;
 
-  --letras-logo: #FFDE59;
-  --fundo-logo: #161A1A;
+  --letras-logo: #ffde59;
+  --fundo-logo: #161a1a;
   --hover-botao: #eb5cc9;
 
   --fonte-primaria: "Krona One", sans-serif;
@@ -32,10 +32,12 @@ body {
 }
 
 /* Transições */
-.fade-enter-active, .fade-leave-active {
-  transition: opacity .5s;
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
 }
-.fade-enter, .fade-leave-to {
+.fade-enter,
+.fade-leave-to {
   opacity: 0;
 }
 
@@ -137,11 +139,19 @@ h1 {
 h4 {
   font-size: 15px;
 }
-/* Botões */
-.verMais{
-font-size: 15px;
-font-weight: bold;
 
+/* Cards */
+.descricao {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 330px; /* ajuste conforme o tamanho do seu card */
+}
+
+/* Botões */
+.verMais {
+  font-size: 15px;
+  font-weight: bold;
 }
 .botaoAdd {
   background-color: var(--cor-terciaria);
@@ -170,18 +180,139 @@ font-weight: bold;
 /* Rodapé */
 .rodape {
   background-color: var(--fundo-logo);
-  padding: 10px;
+  padding: 10px 30px;
   color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  
 }
 
-.rodape .div-rodape {
-  margin: 0px 20px;
-}
-
-.rodape .redes {
+.redes{
+  display: flex;
+  align-items: center;
   gap: 10px;
+  
+}
+
+.icones {
+  display: flex;
+  gap: 15px;
 }
 
 .rodape i {
   font-size: 25px;
+  cursor: pointer;
+}
+
+
+
+.detalhes-container {
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  gap: 40px;
+  padding: 20px;
+}
+
+/* Imagem principal e miniaturas */
+.imagens {
+  max-width: 400px;
+}
+
+.imagem-principal {
+  max-width: 600px;  /* Define um limite máximo */
+  width: 100%;       /* Garante que seja responsivo */
+  height: auto;      /* Mantém a proporção da imagem */
+  max-height: 500px; /* Limita a altura máxima */
+  border-radius: 8px;
+  object-fit: cover; /* Garante que a imagem fique bem ajustada */
+}
+
+.miniaturas {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.miniatura {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: 0.3s;
+}
+
+.miniatura:hover {
+  transform: scale(1.1);
+}
+
+.border-blue-500 {
+  border-color: #007bff;
+}
+
+/* Detalhes da cesta */
+.detalhes {
+  max-width: 500px;
+}
+
+.titulo {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+/* Seletor de extras */
+.select-extra {
+  width: 100%;
+  padding: 8px;
+  margin: 10px 0;
+  border-radius: 5px;
+}
+
+.botao-extra {
+  background-color: blue;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 5px;
+}
+
+/* Lista de extras */
+.lista-extras {
+  margin-top: 10px;
+}
+
+.extra-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.remover-extra {
+  color: red;
+  cursor: pointer;
+}
+
+/* Preço e botão */
+.preco-carrinho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+.preco {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.botao-carrinho {
+  background-color: blue;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
 }
