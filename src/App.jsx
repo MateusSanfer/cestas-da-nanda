@@ -142,7 +142,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         {/* Passa addToCart para Home */}
         <Route path="/" element={<Home addToCart={addToCart} baskets={baskets} />} />
-        <Route path="/cesta/:slug" element={<DetalhesCesta addToCart={addToCart} baskets={baskets} />} />
+        <Route path="/cesta/:id/:slug" element={<DetalhesCesta addToCart={addToCart} baskets={baskets} />} />
 
         <Route path="/sobre" element={<Sobre />} />
         <Route path="/confirmacao" element={<Confirmacao />} />

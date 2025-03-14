@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import Footer from "../components/Footer";
+import "../styles/detalhesCesta.css";
 
 const DetalhesCesta = ({ addToCart, baskets }) => {
-  const { slug } = useParams();
+  const { id, slug } = useParams();
   console.log("Slug recebido:", slug); // Teste no console
+  
+  // Extrai apenas o ID (primeira parte antes da "/")
 
-  // Separar o ID do nome
-  const id = slug.split("id")[0];
   console.log("ID extraído:", id); // Teste no console
-
+  
   // Buscar a cesta pelo ID
   const basket = baskets.find((b) => b.id.toString() === id);
 
@@ -118,7 +119,7 @@ const DetalhesCesta = ({ addToCart, baskets }) => {
           </button>
 
           {/* Itens Extras Adicionados */}
-          <h3>Itens Extras Adicionados:</h3>
+          <h3 className="m-2">Itens Extras Adicionados:</h3>
           <ul className="lista-extras">
             {includedExtraItems.map((extra, index) => (
               <li key={index} className="extra-item">
@@ -143,10 +144,11 @@ const DetalhesCesta = ({ addToCart, baskets }) => {
             </button>
           </div>
         </div>
-        <div>
-          <p className="text-gray-700">{basket.description}</p>
-        </div>
       </div>
+        <div className="descricao2 bg-gray-100 p-3">
+          <h2 className="text-2xl p-1">Descrição:</h2>
+          <p className="text-gray-700">{basket.description} Lore Lorem Lorem Lorem ipsum dolor sit amet consectetur, adipisicing elit. Totam earum fuga minus officiis? Animi mollitia alias molestias dolor deleniti, molestiae corrupti inventore libero pariatur ipsa tempore error aliquid hic dolorem? ipsum dolor, sit amet consectetur adipisicing elit. Consequuntur quia, asperiores ab quasi beatae a nobis voluptatem soluta eaque maiores laboriosam enim reiciendis hic expedita sapiente! Esse corrupti ea iusto. ipsum dolor sit amet consectetur adipisicing elit. Repellendus ut vitae officiis sint enim, nostrum laboriosam asperiores minima, dolores eveniet delectus amet alias laudantium cumque possimus earum nisi hic adipisci?</p>
+        </div>
       <Footer />
     </>
   );

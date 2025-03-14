@@ -60,22 +60,22 @@ function Header({ cart = [], setCart }) {
                   alt="Logo Cestas Da Nanda"
                   className="h-10 w-10"
                 />
-                <span className="text-xl font-bold ml-2">Cestas Da Nanda</span>
+                <span className="text-2xl font-bold ml-2">Cestas Da Nanda</span>
               </div>
 
               {/* Links de Navegação */}
               <div className="flex space-x-6 items-center">
-                <Link to="/" className="hover:text-yellow-400">
-                  Home
+                <Link to="/" className="hover:text-yellow-400 flex items-center gap-1">
+                <i className="bi bi-house text-2xl "></i> Home
                 </Link>
-                <Link to="/sobre" className="hover:text-yellow-400">
+                <Link to="/sobre" className="hover:text-yellow-400 flex items-center gap-1">
                   Sobre
                 </Link>
-                <Link to="/pagamento" className="hover:text-yellow-400">
-                  Pagamento
+                <Link to="/pagamento" className="hover:text-yellow-400 flex items-center gap-1">
+                <i className="bi bi-wallet2 text-2xl"></i> Pagamento
                 </Link>
-                <Link to="/login" className="hover:text-yellow-400">
-                  Login
+                <Link to="/login" className="hover:text-yellow-400 flex items-center gap-1">
+                <i className="bi bi-box-arrow-in-left text-2xl"></i> Login
                 </Link>
 
                 {/* Botão do Carrinho */}
@@ -84,7 +84,7 @@ function Header({ cart = [], setCart }) {
                   className="relative p-2 focus:outline-none"
                 >
                   <svg
-                    className="h-9 w-9 text-gray-500"
+                    className="h-9 w-9 text-gray-500 "
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"

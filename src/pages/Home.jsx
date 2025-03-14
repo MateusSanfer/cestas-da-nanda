@@ -8,7 +8,13 @@ const Home = ({ addToCart, baskets }) => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const generateSlug = (name, id) => {
-    return `${id}/${name.toLowerCase().replace(/\s+/g, "-")}`;
+    const normalized = name
+      .normalize("NFD") // Decompor caracteres acentuados
+      .replace(/[\u0300-\u036f]/g, "") // Remover sinais diacríticos (acentos)
+      .toLowerCase()
+      .replace(/\s+/g, "-"); // Substituir espaços por hífens
+  
+    return `${id}/${normalized}`;
   };
   
   const filteredBaskets = baskets.filter(
@@ -109,7 +115,7 @@ const Home = ({ addToCart, baskets }) => {
           )}
         </div>
       </main>
-      <Footer className></Footer>
+      <Footer />
     </div>
   );
 };

@@ -6,6 +6,16 @@ const CardCesta = ({ basket, addToCart }) => {
     basket.includedExtraItems || []
   );
 
+  const generateSlug = (name, id) => {
+    const normalized = name
+      .normalize("NFD") // Decompor caracteres acentuados
+      .replace(/[\u0300-\u036f]/g, "") // Remover sinais diacríticos (acentos)
+      .toLowerCase()
+      .replace(/\s+/g, "-"); // Substituir espaços por hífens
+  
+    return `${id}/${normalized}`;
+  };
+
   const calculateTotal = () => {
     const extrasTotal = includedExtraItems.reduce(
       (total, item) => total + item.price * item.count,
@@ -40,7 +50,7 @@ const CardCesta = ({ basket, addToCart }) => {
       </span>
 
       <div className="flex justify-between mt-4">
-        <Link to={`/cesta/${basket.id}`}>
+        <Link to={`/cesta/${generateSlug(basket.name, basket.id)}`}> 
           <button className=" verMais bg-blue-500 text-white px-2 py-2 rounded-lg hover:bg-blue-600 transition duration-200 ">
             Ver mais detalhes
           </button>
