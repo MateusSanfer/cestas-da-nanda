@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import logo from "../assets/images/logo.png";
 import { useNavigate } from "react-router-dom";
+import SeletorQuantidade from "./SeletorQuantidade";
 
 function Header({ cart = [], setCart }) {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -19,7 +20,7 @@ function Header({ cart = [], setCart }) {
         )
       : 0;
 
-    return total + item.price + extrasTotal;
+    return total + (item.price + extrasTotal) * item.quantidade;
   }, 0);
 
   const removeFromCart = (item) => {
@@ -36,17 +37,26 @@ function Header({ cart = [], setCart }) {
       alert("Seu carrinho está vazio!");
       return;
     }
-
+    
     // Calcula o total com os itens adicionais
     const cartTotal = cart.reduce((total, item) => {
-      return total + item.price + calcularTotalExtras(item.includedExtraItems);
-    }, 0);
+      const extrasTotal = calcularTotalExtras(item.includedExtraItems);
 
+      return total + (item.price + extrasTotal) * item.quantidade;
+    }, 0);
+  
     // Redireciona para a página de pagamento passando o total correto
     navigate("/pagamento", { state: { cartTotal } });
   };
-
-
+  
+  const atualizarCarrinho = (id, novaQuantidade) => {
+    setCart((prevCart) =>
+      prevCart.map((item) =>
+        item.id === id ? { ...item, quantidade: novaQuantidade } : item
+      )
+    );
+  };
+  
   return (
     <>
       <header>
@@ -163,6 +173,7 @@ function Header({ cart = [], setCart }) {
                           </svg>
                         </button>
                       </div>
+                      <SeletorQuantidade quantidade={item.quantidade} setQuantidade={(novaQuantidade) => atualizarCarrinho(item.id, novaQuantidade)} />
                     </div>
                   ))}
                   <div className="mt-4 border-t pt-4">

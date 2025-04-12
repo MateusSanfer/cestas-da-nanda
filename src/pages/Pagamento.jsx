@@ -45,7 +45,7 @@ function Pagamento({ cart }) {
   // Calcular o total do carrinho
   const total = cart
     .reduce((acc, item) => {
-      // Calcula o total dos extras
+      // Calcula o total dos extras e multiplica pela quantidade
       const extrasTotal = item.includedExtraItems
         ? item.includedExtraItems.reduce(
             (sum, extra) => sum + extra.price * extra.count,
@@ -53,7 +53,7 @@ function Pagamento({ cart }) {
           )
         : 0;
 
-      return acc + item.price + extrasTotal;
+      return acc + (item.price + extrasTotal) * item.quantidade;
     }, 0)
     .toFixed(2);
 

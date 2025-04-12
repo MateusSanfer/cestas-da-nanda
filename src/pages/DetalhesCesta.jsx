@@ -71,15 +71,6 @@ const DetalhesCesta = ({ addToCart, baskets }) => {
     alert("Adicionado ao carrinho");
   };
 
-  const incrementar = () => {
-    setQuantidade(quantidade+1);
-  }
-  const diminuir = () => {
-    if (quantidade > 1) {
-    setQuantidade(quantidade-1);
-    }
-  }
-
   return (
     <>
       <div className="detalhes-container">
@@ -150,7 +141,6 @@ const DetalhesCesta = ({ addToCart, baskets }) => {
             ))}
           </ul>
             
-
           {/* Preço e botão adicionar ao carrinho */}
           <div className="preco-carrinho">
             <span className="preco">R$ {calculateTotal().toFixed(2)}</span>
