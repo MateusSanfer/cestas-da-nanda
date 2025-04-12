@@ -2,14 +2,16 @@ import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import Footer from "../components/Footer";
 import "../styles/detalhesCesta.css";
+import SeletorQuantidade from "../components/SeletorQuantidade";
 
 const DetalhesCesta = ({ addToCart, baskets }) => {
   const { id, slug } = useParams();
   console.log("Slug recebido:", slug); // Teste no console
   
   // Extrai apenas o ID (primeira parte antes da "/")
-
   console.log("ID extraído:", id); // Teste no console
+  
+  const [quantidade, setQuantidade] = useState(1);
   
   // Buscar a cesta pelo ID
   const basket = baskets.find((b) => b.id.toString() === id);
@@ -54,19 +56,29 @@ const DetalhesCesta = ({ addToCart, baskets }) => {
       (total, item) => total + item.price * item.count,
       0
     );
-    return basket.price + extrasTotal;
+    return (basket.price + extrasTotal)* quantidade;
   };
 
   const handleAddToCart = () => {
     const basketWithExtras = {
       ...basket,
       includedExtraItems: [...includedExtraItems],
+      quantidade,
       total: calculateTotal(),
     };
     addToCart(basketWithExtras);
     // alterar isso para uma função de notificação
     alert("Adicionado ao carrinho");
   };
+
+  const incrementar = () => {
+    setQuantidade(quantidade+1);
+  }
+  const diminuir = () => {
+    if (quantidade > 1) {
+    setQuantidade(quantidade-1);
+    }
+  }
 
   return (
     <>
@@ -137,12 +149,18 @@ const DetalhesCesta = ({ addToCart, baskets }) => {
               </li>
             ))}
           </ul>
+            
+
           {/* Preço e botão adicionar ao carrinho */}
           <div className="preco-carrinho">
             <span className="preco">R$ {calculateTotal().toFixed(2)}</span>
-            <button onClick={handleAddToCart} className="botao-carrinho">
-              <i className="bi bi-cart"></i> Adicionar ao carrinho
-            </button>
+            
+            <div className="preco-carrinho-quantidade-carrinho">
+              <SeletorQuantidade quantidade={quantidade} setQuantidade={setQuantidade} />
+              <button onClick={handleAddToCart} className="botao-carrinho">
+                <i className="bi bi-cart"></i> Adicionar ao carrinho
+              </button>
+            </div>
           </div>
         </div>
       </div>
