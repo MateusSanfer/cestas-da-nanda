@@ -1,70 +1,134 @@
-# Getting Started with Create React App
+# 🎁 Cestas Da Nanda - Loja Online  
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Cestas Da Nanda é uma loja online desenvolvida com **React.js** que permite aos clientes personalizar e adquirir cestas de presente de forma prática e intuitiva. A plataforma oferece uma experiência fluida, desde a escolha da cesta até o pagamento, proporcionando um serviço personalizado.  
 
-## Available Scripts
+A plataforma permite **visualizar, buscar e adicionar cestas ao carrinho**, incluindo **itens extras** antes da finalização da compra. Além disso, conta com um **painel administrativo**, onde o administrador pode gerenciar produtos e pedidos.  
 
-In the project directory, you can run:
+## 📌 Funcionalidades  
 
-### `npm start`
+### 🛍️ Para os clientes:  
+- Exibição de cestas com imagens, descrições e preços.  
+- Pesquisa de cestas por nome e descrição.  
+- Página de detalhes de cada cesta com opção de adicionar itens extras.  
+- Carrinho de compras dinâmico, atualizando automaticamente o preço total.  
+- **Checkout**:  
+  - Cálculo automático do preço total, incluindo itens extras.  
+  - Preenchimento automático do endereço via **API ViaCEP**.  
+  - Escolha do método de pagamento (**Pix, boleto, cartão**).  
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### 🔧 Para o administrador:  
+- Cadastro, edição e remoção de cestas.  
+- Gerenciamento de pedidos realizados pelos clientes.  
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+---
 
-### `npm test`
+## 🛠️ Tecnologias Utilizadas  
+- **React.js** ⚛️  
+- **React Router** (para navegação) 🚏  
+- **Tailwind CSS + Bootstrap** (para estilização) 🎨  
+- **Firebase Authentication** 🔥 (para login/administração)  
+- **API ViaCEP** 📍 (para preenchimento automático do endereço)  
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `npm run build`
+## 🚀 Como Rodar o Projeto  
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```sh
+# Clone o repositório
+git clone https://github.com/MateusSanfer/cestas-da-nanda.git
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+# Instale as dependências
+npm install
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+# Inicie o servidor de desenvolvimento
+npm start
+```
 
-### `npm run eject`
+A aplicação estará disponível em `http://localhost:3000`.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+---
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 📂 Estrutura do Projeto  
+```
+📦 src  
+ ┣ 📂 assets      # Imagens e outros arquivos estáticos  
+ ┣ 📂 components  # Componentes reutilizáveis  
+ ┣ 📂 pages       # Páginas principais  
+ ┣ 📂 utils       # Funções auxiliares (ex: cálculo de total do carrinho)  
+ ┣ 📜 App.js      # Componente principal  
+ ┣ 📜 index.js    # Ponto de entrada da aplicação  
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+---
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 📜 Principais Componentes  
 
-## Learn More
+### `CardCesta.jsx`  
+- Renderiza um cartão com os detalhes da cesta.  
+- Possui um botão **"Ver mais detalhes"** que leva à página de detalhes.  
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### `DetalhesCesta.jsx`  
+- Exibe detalhes da cesta selecionada.  
+- Permite adicionar itens extras e calcular o preço total antes da compra.  
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### `Carrinho.jsx`  
+- Lista os produtos adicionados ao carrinho.  
+- Exibe o cálculo atualizado do total, incluindo itens extras.  
+- Redireciona para a página de pagamento.  
 
-### Code Splitting
+### `Pagamento.jsx`  
+- Responsável pela finalização da compra.  
+- Coleta os dados do cliente e o endereço.  
+- Integra-se com a **API ViaCEP** para preenchimento automático do endereço.  
+- Permite escolher entre **Pix, boleto ou cartão de crédito**.  
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+---
 
-### Analyzing the Bundle Size
+## 🔗 Rotas da Aplicação  
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+| Rota               | Descrição                              |
+|------------------|----------------------------------|
+| `/`               | Página inicial                    |
+| `/cesta/:id/:slug` | Página de detalhes da cesta      |
+| `/carrinho`        | Página do carrinho               |
+| `/pagamento`       | Checkout e finalização do pedido |
+| `/admin`           | Painel administrativo *(acesso restrito via login)* |
 
-### Making a Progressive Web App
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## 📌 Melhorias Futuras  
+- Integração com gateway de pagamento real.  
+- Implementação de um sistema de rastreamento de pedidos.  
+- Área do cliente para acompanhar compras e histórico de pedidos.  
 
-### Advanced Configuration
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## 👨‍💻 Contribuição  
+Caso queira contribuir, siga os passos:  
 
-### Deployment
+```sh
+# 1️⃣ Faça um fork do repositório.
+# 2️⃣ Crie uma branch com sua feature:
+git checkout -b minha-feature
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+# 3️⃣ Commit suas alterações:
+git commit -m "Adicionei uma nova feature"
 
-### `npm run build` fails to minify
+# 4️⃣ Envie para o repositório:
+git push origin minha-feature
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+# 5️⃣ Abra um Pull Request 🚀
+```
+
+---
+
+## 📜 Licença  
+Este projeto é **open-source** e pode ser utilizado e modificado livremente.  
+
+---
+
+## 📢 Observações  
+Esta loja ainda está em fase de desenvolvimento, então novas funcionalidades podem ser adicionadas conforme necessário!  
+
+🚀 **Desenvolvido por Mateus**
+
