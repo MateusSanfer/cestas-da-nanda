@@ -68,7 +68,7 @@ function Pagamento({ cart }) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center">
       <div className="p-8 bg-white rounded-lg shadow-lg max-w-lg w-full">
         <h2 className="text-2xl font-semibold mb-6">Finalizar Pedido</h2>
 

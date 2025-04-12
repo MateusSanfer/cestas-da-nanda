@@ -99,16 +99,19 @@
   width: 100%;
   padding: 8px;
   margin: 10px 0;
-  border-radius: 5px;
+  border-radius: 8px;
 }
 
 .botao-extra {
   background-color:var(--cor-terciaria);
   color: white;
   padding: 8px 12px;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
   margin-top: 5px;
+}
+.botao-extra:hover{
+  background-color: var(--hover-botao);
 }
 
 /* Lista de extras */
@@ -135,6 +138,8 @@
   margin-top: 15px;
 }
 
+
+
 .preco {
   font-size: 1.5rem;
   font-weight: bold;
@@ -144,6 +149,10 @@
   background-color: var(--cor-terciaria);
   color: white;
   padding: 10px 15px;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
+}
+
+.botao-carrinho:hover{
+  background-color: var(--hover-botao);
 }

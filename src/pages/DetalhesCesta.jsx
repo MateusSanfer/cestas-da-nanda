@@ -63,8 +63,9 @@ const DetalhesCesta = ({ addToCart, baskets }) => {
       includedExtraItems: [...includedExtraItems],
       total: calculateTotal(),
     };
-
     addToCart(basketWithExtras);
+    // alterar isso para uma função de notificação
+    alert("Adicionado ao carrinho");
   };
 
   return (
