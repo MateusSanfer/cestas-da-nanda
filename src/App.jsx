@@ -12,20 +12,62 @@ import cesta1 from "./assets/images/cesta1.jpg";
 import cesta2 from "./assets/images/cesta2.jpg";
 import cesta3 from "./assets/images/cesta3.jpg";
 import foto4 from "./assets/images/foto4.jpg";
+import { v4 as uuidv4 } from "uuid";
 
 function App() {
   const [cart, setCart] = useState([]); // Gerenciar o estado do carrinho aqui
   const [user, setUser] = useState(null);
 
-  // Função para adicionar itens ao carrinho
-  const addToCart = (item) => {
-    setCart((prevCart) => [...prevCart, item]);
-  };
+// Função para comparar os extras
+const areExtrasEqual = (extras1, extras2) => {
+  if (extras1.length !== extras2.length) return false;
+
+  const sorted1 = [...extras1].sort((a, b) => a.name.localeCompare(b.name));
+  const sorted2 = [...extras2].sort((a, b) => a.name.localeCompare(b.name));
+
+  return sorted1.every((item, index) =>
+    item.name === sorted2[index].name &&
+    item.price === sorted2[index].price &&
+    item.count === sorted2[index].count
+  );
+};
+// Função para adicionar ao carrinho
+const addToCart = (newItem) => {
+  setCart((prevCart) => {
+    const existingIndex = prevCart.findIndex(
+      (item) =>
+        item.id === newItem.id &&
+        areExtrasEqual(item.includedExtraItems, newItem.includedExtraItems)
+    );
+
+    if (existingIndex !== -1) {
+      const updatedCart = [...prevCart];
+
+      // Atualiza a quantidade e recalcula o total corretamente
+      const existingItem = updatedCart[existingIndex];
+      const novaQuantidade = existingItem.quantidade + newItem.quantidade;
+      const precoUnitario =
+        (existingItem.total || 0) / (existingItem.quantidade || 1);
+
+      updatedCart[existingIndex] = {
+        ...existingItem,
+        quantidade: novaQuantidade,
+        total: precoUnitario * novaQuantidade,
+      };
+
+      return updatedCart;
+    } else {
+      // Item novo, adiciona com UID
+      return [...prevCart, { ...newItem, uid: uuidv4() }];
+    }
+  });
+};
 
   // Função para remover itens do carrinho
-  const removeFromCart = (itemId) => {
-    setCart((prevCart) => prevCart.filter((item) => item.id !== itemId));
+  const removeFromCart = (uid) => {
+    setCart((prevCart) => prevCart.filter((item) => item.uid !== uid));
   };
+  
 
   const [baskets, setBaskets] = useState([
     {

@@ -24,9 +24,10 @@ function Header({ cart = [], setCart }) {
   }, 0);
 
   const removeFromCart = (item) => {
-    const updatedCart = cart.filter((cartItem) => cartItem.id !== item.id);
+    const updatedCart = cart.filter((cartItem) => cartItem.uid !== item.uid);
     setCart(updatedCart);
   };
+  
 
  const calcularTotalExtras = (includedExtraItems = []) => {
     return includedExtraItems.reduce((sum, extra) => sum + extra.price * extra.count, 0);
@@ -49,10 +50,10 @@ function Header({ cart = [], setCart }) {
     navigate("/pagamento", { state: { cartTotal } });
   };
   
-  const atualizarCarrinho = (id, novaQuantidade) => {
+  const atualizarCarrinho = (uid, novaQuantidade) => {
     setCart((prevCart) =>
       prevCart.map((item) =>
-        item.id === id ? { ...item, quantidade: novaQuantidade } : item
+        item.uid === uid ? { ...item, quantidade: novaQuantidade } : item
       )
     );
   };
@@ -135,7 +136,7 @@ function Header({ cart = [], setCart }) {
               ) : (
                 <div>
                   {cart.map((item) => (
-                    <div key={item.id} className="mb-4 p-4 border rounded-lg">
+                    <div key={item.uid} className="mb-4 p-4 border rounded-lg">
                       <h3 className="font-semibold">{item.name}</h3>
                       <p className="text-gray-600 text-sm mb-2">
                         Itens Inclusos:
@@ -173,7 +174,7 @@ function Header({ cart = [], setCart }) {
                           </svg>
                         </button>
                       </div>
-                      <SeletorQuantidade quantidade={item.quantidade} setQuantidade={(novaQuantidade) => atualizarCarrinho(item.id, novaQuantidade)} />
+                      <SeletorQuantidade quantidade={item.quantidade} setQuantidade={(novaQuantidade) => atualizarCarrinho(item.uid, novaQuantidade)} />
                     </div>
                   ))}
                   <div className="mt-4 border-t pt-4">

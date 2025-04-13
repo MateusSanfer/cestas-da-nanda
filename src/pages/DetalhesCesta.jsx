@@ -5,12 +5,8 @@ import "../styles/detalhesCesta.css";
 import SeletorQuantidade from "../components/SeletorQuantidade";
 
 const DetalhesCesta = ({ addToCart, baskets }) => {
-  const { id, slug } = useParams();
-  console.log("Slug recebido:", slug); // Teste no console
-  
-  // Extrai apenas o ID (primeira parte antes da "/")
-  console.log("ID extraído:", id); // Teste no console
-  
+  const { id} = useParams();
+
   const [quantidade, setQuantidade] = useState(1);
   
   // Buscar a cesta pelo ID
