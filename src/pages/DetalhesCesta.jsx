@@ -2,25 +2,61 @@ import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import Footer from "../components/Footer";
 import "../styles/detalhesCesta.css";
-import SeletorQuantidade from "../components/SeletorQuantidade";
+import toast from "react-hot-toast";
+import ExtrasAdicionados from "../components/ExtrasAdicionados";
+import SeletorExtras from "../components/SeletorExtras";
+import GaleriaImagens from "../components/GaleriaImagens";
+import ResumoCompra from "../components/ResumoCompra";
 
 const DetalhesCesta = ({ addToCart, baskets }) => {
-  const { id} = useParams();
-
+  const { id } = useParams();
   const [quantidade, setQuantidade] = useState(1);
-  
-  // Buscar a cesta pelo ID
-  const basket = baskets.find((b) => b.id.toString() === id);
 
-  const [selectedExtra, setSelectedExtra] = useState(null);
-  const [includedExtraItems, setIncludedExtraItems] = useState(
-    basket?.includedExtraItems || []
-  );
-  const [imagemPrincipal, setImagemPrincipal] = useState(basket.image);
+  // Encontrar a cesta correspondente
+  const foundBasket = baskets.find((b) => b.id?.toString() === id);
+  const basket = foundBasket || {
+    name: "",
+    description: "",
+    price: 0,
+    image: "",
+    images: "[]",
+    includedItems: "[]",
+    availableExtras: "[]",
+  };
 
-  if (!basket) {
-    return <div className="p-6 text-2xl mt-5">Cesta não encontrada.</div>; //Alterar isso para que fique visivel
+  // Parse seguro dos campos JSON
+  let imagens = [];
+  let includedItems = [];
+  let availableExtras = [];
+
+  try {
+    imagens = Array.isArray(basket.images)
+      ? basket.images
+      : JSON.parse(basket.images || "[]");
+    includedItems = Array.isArray(basket.includedItems)
+      ? basket.includedItems
+      : JSON.parse(basket.includedItems || "[]");
+    availableExtras = Array.isArray(basket.availableExtras)
+      ? basket.availableExtras
+      : JSON.parse(basket.availableExtras || "[]");
+  } catch (e) {
+    console.error("Erro ao fazer parse dos dados da cesta", e);
   }
+
+  // Hooks SEMPRE fora de condicional
+  const [selectedExtra, setSelectedExtra] = useState(null);
+  const [includedExtraItems, setIncludedExtraItems] = useState([]);
+  const [imagemPrincipal, setImagemPrincipal] = useState(basket.image || "");
+
+  // Mostrar mensagem se a cesta não for encontrada
+  if (!foundBasket) {
+    return (
+      <div className="p-6 text-2xl mt-5 text-center text-red-600">
+        Cesta não encontrada.
+      </div>
+    );
+  }
+
   const addExtra = () => {
     if (selectedExtra) {
       const existingExtraIndex = includedExtraItems.findIndex(
@@ -52,108 +88,73 @@ const DetalhesCesta = ({ addToCart, baskets }) => {
       (total, item) => total + item.price * item.count,
       0
     );
-    return (basket.price + extrasTotal)* quantidade;
+    return (basket.price + extrasTotal) * quantidade;
   };
 
   const handleAddToCart = () => {
+    const parsedIncludedItems = Array.isArray(basket.includedItems)
+      ? basket.includedItems
+      : JSON.parse(basket.includedItems || "[]");
+
     const basketWithExtras = {
       ...basket,
+      includedItems: parsedIncludedItems,
       includedExtraItems: [...includedExtraItems],
       quantidade,
       total: calculateTotal(),
+      uid: Date.now(), // Para diferenciar itens no carrinho
     };
     addToCart(basketWithExtras);
-    // alterar isso para uma função de notificação
-    alert("Adicionado ao carrinho");
+    toast.success("Cesta adicionada ao carrinho com sucesso!");
+    setIncludedExtraItems([]); // limpa extras
   };
 
   return (
     <>
       <div className="detalhes-container">
         {/* Imagens da cesta */}
-        <div className="imagens">
-          <img
-            src={imagemPrincipal}
-            alt={basket.name}
-            className="imagem-principal"
-          />
-          <div className="miniaturas">
-            {(basket.images || []).map((img, index) => (
-              <img
-                key={index}
-                src={img}
-                alt="Miniatura"
-                className="miniatura cursor-pointer"
-                onClick={() => setImagemPrincipal(img)} // Troca a imagem ao clicar
-              />
-            ))}
-          </div>
-        </div>
+        <GaleriaImagens
+          imagemPrincipal={imagemPrincipal}
+          setImagemPrincipal={setImagemPrincipal}
+          imagens={imagens}
+          alt={basket.name}
+        />
 
         <div className="detalhes">
           <h2 className="titulo">{basket.name}</h2>
           <h3 className="font-bold">Itens Inclusos:</h3>
           <ul>
-            {basket.includedItems.map((item, index) => (
+            {includedItems.map((item, index) => (
               <li key={index}>{item}</li>
             ))}
           </ul>
           {/* Adicionar Itens Extras */}
-          <label>Adicionar Itens Extras:</label>
-          <select
-            value={selectedExtra ? JSON.stringify(selectedExtra) : ""}
-            onChange={(e) =>
-              setSelectedExtra(JSON.parse(e.target.value || null))
-            }
-            className="select-extra"
-          >
-            <option value="">Selecione um extra</option>
-            {basket.availableExtras.map((extra, index) => (
-              <option key={index} value={JSON.stringify(extra)}>
-                {extra.name} - R$ {extra.price.toFixed(2)}
-              </option>
-            ))}
-          </select>
-          <button onClick={addExtra} className="botao-extra">
-            Adicionar
-          </button>
+          <SeletorExtras
+            availableExtras={availableExtras}
+            selectedExtra={selectedExtra}
+            setSelectedExtra={setSelectedExtra}
+            addExtra={addExtra}
+          />
 
           {/* Itens Extras Adicionados */}
-          <h3 className="m-2">Itens Extras Adicionados:</h3>
-          <ul className="lista-extras">
-            {includedExtraItems.map((extra, index) => (
-              <li key={index} className="extra-item">
-                <span>
-                  {extra.name} ({extra.count})
-                </span>
-                <span>R$ {(extra.price * extra.count).toFixed(2)}</span>
-                <button
-                  onClick={() => removeExtra(index)}
-                  className="remover-extra"
-                >
-                  Remover
-                </button>
-              </li>
-            ))}
-          </ul>
-            
+          <ExtrasAdicionados
+            includedExtraItems={includedExtraItems}
+            removeExtra={removeExtra}
+          />
+
           {/* Preço e botão adicionar ao carrinho */}
-          <div className="preco-carrinho">
-            <span className="preco">R$ {calculateTotal().toFixed(2)}</span>
-            
-            <div className="preco-carrinho-quantidade-carrinho">
-              <SeletorQuantidade quantidade={quantidade} setQuantidade={setQuantidade} />
-              <button onClick={handleAddToCart} className="botao-carrinho">
-                <i className="bi bi-cart"></i> Adicionar ao carrinho
-              </button>
-            </div>
-          </div>
+          <ResumoCompra
+            quantidade={quantidade}
+            setQuantidade={setQuantidade}
+            calculateTotal={calculateTotal}
+            handleAddToCart={handleAddToCart}
+          />
         </div>
       </div>
-        <div className="descricao2 bg-gray-100 p-3">
-          <h2 className="text-2xl p-1">Descrição:</h2>
-          <p className="text-gray-700">{basket.description} Lore Lorem Lorem Lorem ipsum dolor sit amet consectetur, adipisicing elit. Totam earum fuga minus officiis? Animi mollitia alias molestias dolor deleniti, molestiae corrupti inventore libero pariatur ipsa tempore error aliquid hic dolorem? ipsum dolor, sit amet consectetur adipisicing elit. Consequuntur quia, asperiores ab quasi beatae a nobis voluptatem soluta eaque maiores laboriosam enim reiciendis hic expedita sapiente! Esse corrupti ea iusto. ipsum dolor sit amet consectetur adipisicing elit. Repellendus ut vitae officiis sint enim, nostrum laboriosam asperiores minima, dolores eveniet delectus amet alias laudantium cumque possimus earum nisi hic adipisci?</p>
-        </div>
+      <div className="descricao2 bg-gray-100 p-3">
+        <h2 className="text-2xl p-1">Descrição:</h2>
+        <p className="text-gray-700">{basket.description}</p>
+      </div>
       <Footer />
     </>
   );

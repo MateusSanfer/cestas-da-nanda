@@ -54,28 +54,30 @@ const Home = ({ addToCart, baskets }) => {
 
         {/* Carrossel de Cesta em Destaque */}
         <div className="max-w-6x1 mx-auto px-4 my-6 ">
-          <div className="highlighted-basket p-4 rounded-lg shadow-md bg-white text-center flex justify-between items-center">
-            <div className="text-center flex justify-between items-center p-4 gap-5">
-              <div>
-                <h3 className="text-lg font-semibold mb-2">
-                  Cesta em Destaque: {baskets[highlightedIndex].name}
-                </h3>
-                <p>{baskets[highlightedIndex].description}</p>
-                <p className="text-lg font-bold mt-2">
-                  R$ {baskets[highlightedIndex].price.toFixed(2)}
-                </p>
-              </div>
-            </div>
-            <button
-              onClick={() => addToCart(baskets[highlightedIndex])}
-              className="botaoAdd mt-2 text-white px-4 py-2 rounded-lg transition duration-200"
-            >
-              Adicionar ao Carrinho
-            </button>
-            <div>
-              <img src={foto} alt="" className="foto" />
-            </div>
-          </div>
+        {baskets.length > 0 && (
+  <div className="highlighted-basket p-4 rounded-lg shadow-md bg-white text-center flex justify-between items-center">
+    <div className="text-center flex justify-between items-center p-4 gap-5">
+      <div>
+        <h3 className="text-lg font-semibold mb-2">
+          Cesta em Destaque: {baskets[highlightedIndex].name}
+        </h3>
+        <p>{baskets[highlightedIndex].description}</p>
+        <p className="text-lg font-bold mt-2">
+          R$ {baskets[highlightedIndex].price.toFixed(2)}
+        </p>
+      </div>
+    </div>
+    <button
+      onClick={() => addToCart(baskets[highlightedIndex])}
+      className="botaoAdd mt-2 text-white px-4 py-2 rounded-lg transition duration-200"
+    >
+      Adicionar ao Carrinho
+    </button>
+    <div>
+      <img src={foto} alt="" className="foto" />
+    </div>
+  </div>
+)}
           <div className="flex justify-center gap-4 mt-4">
             <button
               onClick={prevBasket}
@@ -101,10 +103,6 @@ const Home = ({ addToCart, baskets }) => {
                 to={`/cesta/${generateSlug(basket.name, basket.id)}`}
                 key={basket.id} 
               >
-                {console.log(
-                  "URL gerada:",
-                  `/cesta/${generateSlug(basket.name, basket.id)}`
-                )}
                 <CardCesta basket={basket} addToCart={addToCart} />
               </Link>
             ))
