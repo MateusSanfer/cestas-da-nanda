@@ -4,7 +4,7 @@ import logo from "../assets/images/logo.png";
 import { useNavigate } from "react-router-dom";
 import SeletorQuantidade from "./SeletorQuantidade";
 
-function Header({ cart = [], setCart }) {
+function Header({ user,cart = [], setCart }) {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -27,10 +27,12 @@ function Header({ cart = [], setCart }) {
     const updatedCart = cart.filter((cartItem) => cartItem.uid !== item.uid);
     setCart(updatedCart);
   };
-  
 
- const calcularTotalExtras = (includedExtraItems = []) => {
-    return includedExtraItems.reduce((sum, extra) => sum + extra.price * extra.count, 0);
+  const calcularTotalExtras = (includedExtraItems = []) => {
+    return includedExtraItems.reduce(
+      (sum, extra) => sum + extra.price * extra.count,
+      0
+    );
   };
 
   const checkout = () => {
@@ -38,18 +40,18 @@ function Header({ cart = [], setCart }) {
       alert("Seu carrinho está vazio!");
       return;
     }
-    
+
     // Calcula o total com os itens adicionais
     const cartTotal = cart.reduce((total, item) => {
       const extrasTotal = calcularTotalExtras(item.includedExtraItems);
 
       return total + (item.price + extrasTotal) * item.quantidade;
     }, 0);
-  
+
     // Redireciona para a página de pagamento passando o total correto
     navigate("/pagamento", { state: { cartTotal } });
   };
-  
+
   const atualizarCarrinho = (uid, novaQuantidade) => {
     setCart((prevCart) =>
       prevCart.map((item) =>
@@ -57,13 +59,13 @@ function Header({ cart = [], setCart }) {
       )
     );
   };
-  
+
   return (
     <>
       <header>
         <nav className="shadow-lg bg-black text-white">
           <div className="max-w-6xl mx-auto px-2">
-            <div className="flex justify-between items-center py-4">
+            <div className="flex justify-between items-center py-3">
               {/* Logo */}
               <div className="flex items-center">
                 <img
@@ -76,23 +78,45 @@ function Header({ cart = [], setCart }) {
 
               {/* Links de Navegação */}
               <div className="flex space-x-6 items-center">
-                <Link to="/" className="hover:text-yellow-400 flex items-center gap-1">
-                <i className="bi bi-house text-2xl "></i> Home
+                <Link
+                  to="/"
+                  className="hover:text-yellow-400 flex items-center gap-1"
+                >
+                  <i className="bi bi-house text-2xl "></i> Home
                 </Link>
-                <Link to="/sobre" className="hover:text-yellow-400 flex items-center gap-1">
+                <Link
+                  to="/sobre"
+                  className="hover:text-yellow-400 flex items-center gap-1"
+                >
                   Sobre
                 </Link>
-                <Link to="/pagamento" className="hover:text-yellow-400 flex items-center gap-1">
-                <i className="bi bi-wallet2 text-2xl"></i> Pagamento
+                <Link
+                  to="/pagamento"
+                  className="hover:text-yellow-400 flex items-center gap-1"
+                >
+                  <i className="bi bi-wallet2 text-2xl"></i> Pagamento
                 </Link>
-                <Link to="/login" className="hover:text-yellow-400 flex items-center gap-1">
-                <i className="bi bi-box-arrow-in-left text-2xl"></i> Login
+                <Link
+                  to="/login"
+                  className="hover:text-yellow-400 flex items-center gap-1"
+                >
+                  <i className="bi bi-box-arrow-in-left text-2xl"></i> Login
                 </Link>
+
+                {/* Link do Admin apenas se for admin */}
+                {user?.isAdmin && (
+                  <Link
+                    to="/admin"
+                    className="hover:text-yellow-400 flex items-center gap-1"
+                  >
+                    <i className="bi bi-person-gear"></i> Administrador
+                  </Link>
+                )}
 
                 {/* Botão do Carrinho */}
                 <button
                   onClick={toggleCart}
-                  className="relative p-2 focus:outline-none"
+                  className="relative p-1 focus:outline-none"
                 >
                   <svg
                     className="h-9 w-9 text-gray-500 "
@@ -153,7 +177,11 @@ function Header({ cart = [], setCart }) {
                       </ul>
                       <div className="flex justify-between items-center mt-2">
                         <p className="text-gray-600">
-                          R$ {(item.price + calcularTotalExtras(item.includedExtraItems)).toFixed(2)}
+                          R${" "}
+                          {(
+                            item.price +
+                            calcularTotalExtras(item.includedExtraItems)
+                          ).toFixed(2)}
                         </p>
                         <button
                           onClick={() => removeFromCart(item)}
@@ -174,7 +202,12 @@ function Header({ cart = [], setCart }) {
                           </svg>
                         </button>
                       </div>
-                      <SeletorQuantidade quantidade={item.quantidade} setQuantidade={(novaQuantidade) => atualizarCarrinho(item.uid, novaQuantidade)} />
+                      <SeletorQuantidade
+                        quantidade={item.quantidade}
+                        setQuantidade={(novaQuantidade) =>
+                          atualizarCarrinho(item.uid, novaQuantidade)
+                        }
+                      />
                     </div>
                   ))}
                   <div className="mt-4 border-t pt-4">

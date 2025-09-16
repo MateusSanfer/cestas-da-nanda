@@ -2,6 +2,8 @@ import React from "react";
 import "../styles/detalhesCesta.css";
 
 const GaleriaImagens = ({ imagemPrincipal, setImagemPrincipal, imagens, alt }) => {
+  console.log('Imagens ',imagemPrincipal)
+  console.log(imagemPrincipal.length)
   return (
     <div className="imagens">
       <img

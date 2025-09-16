@@ -56,7 +56,9 @@
   max-height: 500px; /* Limita a altura máxima */
   border-radius: 8px;
   object-fit: cover; /* Garante que a imagem fique bem ajustada */
+  border: 2px solid red;
 }
+
 
 .miniaturas {
   display: flex;

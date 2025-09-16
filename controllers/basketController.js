@@ -8,7 +8,7 @@ module.exports = {
 
   async show(req, res) {
     const basket = await Basket.findByPk(req.params.id);
-    if (!basket) return res.status(404).json({ error: 'Cesta não encontrada' });
+    if (!basket) return res.status(404).json({ error: 'Cesta não encontrada GET' });
     res.json(basket);
   },
 
@@ -19,14 +19,14 @@ module.exports = {
 
   async update(req, res) {
     const basket = await Basket.findByPk(req.params.id);
-    if (!basket) return res.status(404).json({ error: 'Cesta não encontrada' });
+    if (!basket) return res.status(404).json({ error: 'Cesta não encontrada PUSST' });
     await basket.update(req.body);
     res.json(basket);
   },
 
   async destroy(req, res) {
     const basket = await Basket.findByPk(req.params.id);
-    if (!basket) return res.status(404).json({ error: 'Cesta não encontrada' });
+    if (!basket) return res.status(404).json({ error: 'Cesta não encontrada OPOSA' });
     await basket.destroy();
     res.status(204).send();
   }

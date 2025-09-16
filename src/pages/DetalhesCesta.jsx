@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Footer from "../components/Footer";
 import "../styles/detalhesCesta.css";
@@ -46,7 +46,14 @@ const DetalhesCesta = ({ addToCart, baskets }) => {
   // Hooks SEMPRE fora de condicional
   const [selectedExtra, setSelectedExtra] = useState(null);
   const [includedExtraItems, setIncludedExtraItems] = useState([]);
-  const [imagemPrincipal, setImagemPrincipal] = useState(basket.image || "");
+  const [imagemPrincipal, setImagemPrincipal] = useState("");
+
+  useEffect(() => {
+    if (basket.image) {
+      setImagemPrincipal(basket.image);
+    }
+  }, [basket.image]);
+
 
   // Mostrar mensagem se a cesta não for encontrada
   if (!foundBasket) {

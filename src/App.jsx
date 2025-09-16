@@ -4,7 +4,6 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Navigate,
 } from "react-router-dom";
 import Header from "./components/Header";
 import Home from "./pages/Home";
@@ -13,9 +12,10 @@ import Confirmacao from "./pages/Confirmacao";
 import Pagamento from "./pages/Pagamento";
 import Login from "./pages/Login";
 import DetalhesCesta from "./pages/DetalhesCesta";
-import { auth } from "./config/firebaseConfig";
 import { v4 as uuidv4 } from "uuid";
 import { Toaster } from "react-hot-toast";
+import ProtectedRoute from "./components/ProtectedRoute";
+import AdminPanel from "./pages/admin/AdminPanel";
 
 function App() {
   const [cart, setCart] = useState([]); // Gerenciar o estado do carrinho aqui
@@ -87,20 +87,19 @@ function App() {
       })
       .catch((err) => console.error("Erro ao buscar cestas:", err));
   }, []);
-  
-  
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      setUser(user);
-    });
-    return () => unsubscribe();
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
   }, []);
 
   return (
     <Router>
       {/* Passa as props relacionadas ao carrinho para o Header */}
       <Header
+      user={user}
         cart={cart}
         setCart={setCart}
         addToCart={addToCart}
@@ -122,13 +121,25 @@ function App() {
         <Route path="/confirmacao" element={<Confirmacao />} />
         <Route
           path="/pagamento"
-          element={user ? <Pagamento cart={cart} /> : <Navigate to="/login" />}
+          element={
+            <ProtectedRoute>
+              <Pagamento cart={cart} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute requireAdmin={true}>
+              <AdminPanel />
+            </ProtectedRoute>
+          }
         />
       </Routes>
       <>
-      <Toaster position="top-right" />
-      <Routes>...</Routes>
-    </>
+        <Toaster position="top-right" />
+        <Routes>...</Routes>
+      </>
     </Router>
   );
 }
