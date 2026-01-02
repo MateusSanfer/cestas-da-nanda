@@ -4,13 +4,17 @@ import logo from "../assets/images/logo.png";
 import { useNavigate } from "react-router-dom";
 import SeletorQuantidade from "./SeletorQuantidade";
 
-function Header({ user,cart = [], setCart }) {
+function Header({ user, cart = [], setCart }) {
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   const toggleCart = () => {
     setIsCartOpen(!isCartOpen);
+    setIsMenuOpen(false); // Close menu when opening cart
   };
+
+  const closeMenu = () => setIsMenuOpen(false);
 
   const cartTotal = cart.reduce((total, item) => {
     const extrasTotal = item.includedExtraItems
@@ -41,15 +45,13 @@ function Header({ user,cart = [], setCart }) {
       return;
     }
 
-    // Calcula o total com os itens adicionais
     const cartTotal = cart.reduce((total, item) => {
       const extrasTotal = calcularTotalExtras(item.includedExtraItems);
-
       return total + (item.price + extrasTotal) * item.quantidade;
     }, 0);
 
-    // Redireciona para a página de pagamento passando o total correto
     navigate("/pagamento", { state: { cartTotal } });
+    setIsCartOpen(false);
   };
 
   const atualizarCarrinho = (uid, novaQuantidade) => {
@@ -67,22 +69,31 @@ function Header({ user,cart = [], setCart }) {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-4">
               {/* Logo */}
-              <div className="flex items-center gap-3">
-                <Link
-                  to="/"
-                  >
-                <img
-                  src={logo}
-                  alt="Logo Cestas Da Nanda"
-                  className="h-12 w-12 rounded-full border-2 border-terracotta object-cover"
-                />
-                
-                <span className="text-2xl font-serif font-bold text-terracotta tracking-tight">Cestas Da Nanda</span>
-                </Link>
-              </div>
+              <Link to="/" onClick={closeMenu}>
+                <div className="flex items-center gap-3">
+                  <img
+                    src={logo}
+                    alt="Logo Cestas Da Nanda"
+                    className="h-12 w-12 rounded-full border-2 border-terracotta object-cover"
+                  />
+                  <span className="text-xl md:text-2xl font-serif font-bold text-terracotta tracking-tight">
+                    Cestas Da Nanda
+                  </span>
+                </div>
+              </Link>
 
-              {/* Links de Navegação */}
-              <div className="flex space-x-8 items-center">
+              {/* Hamburger Button (Mobile) */}
+              <button
+                className="md:hidden text-charcoal focus:outline-none p-2"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+              >
+                <i
+                  className={`bi bi-${isMenuOpen ? "x-lg" : "list"} text-3xl`}
+                ></i>
+              </button>
+
+              {/* Desktop Navigation */}
+              <div className="hidden md:flex space-x-8 items-center">
                 <Link
                   to="/"
                   className="hover:text-terracotta transition-colors font-medium flex items-center gap-2 text-sm uppercase tracking-wide"
@@ -96,19 +107,20 @@ function Header({ user,cart = [], setCart }) {
                   Sobre
                 </Link>
                 {user && (
-                    <Link
+                  <Link
                     to="/minha-conta"
                     className="hover:text-terracotta transition-colors font-medium flex items-center gap-2 text-sm uppercase tracking-wide"
-                    >
-                    <i className="bi bi-person-lines-fill text-lg"></i> Minha Conta
-                    </Link>
+                  >
+                    <i className="bi bi-person-lines-fill text-lg"></i> Minha
+                    Conta
+                  </Link>
                 )}
                 {user ? (
-                   <button
+                  <button
                     onClick={() => {
-                        localStorage.removeItem('user');
-                        localStorage.removeItem('token'); // Assuming token is stored
-                        window.location.reload();
+                      localStorage.removeItem("user");
+                      localStorage.removeItem("token");
+                      window.location.reload();
                     }}
                     className="hover:text-terracotta transition-colors font-medium flex items-center gap-2 text-sm uppercase tracking-wide"
                   >
@@ -123,7 +135,6 @@ function Header({ user,cart = [], setCart }) {
                   </Link>
                 )}
 
-                {/* Link do Admin apenas se for admin */}
                 {user?.isAdmin && (
                   <Link
                     to="/admin"
@@ -133,7 +144,6 @@ function Header({ user,cart = [], setCart }) {
                   </Link>
                 )}
 
-                {/* Botão do Carrinho */}
                 <button
                   onClick={toggleCart}
                   className="relative p-2 text-charcoal hover:text-terracotta transition-colors"
@@ -148,6 +158,76 @@ function Header({ user,cart = [], setCart }) {
               </div>
             </div>
           </div>
+
+          {/* Mobile Menu Dropdown */}
+          {isMenuOpen && (
+            <div className="md:hidden bg-white border-t border-gray-100 animate-fade-in-down shadow-lg absolute w-full left-0 top-full">
+              <div className="flex flex-col px-4 py-4 space-y-4">
+                <Link
+                  to="/"
+                  onClick={closeMenu}
+                  className="text-lg font-medium text-charcoal hover:text-terracotta flex items-center gap-3 border-b border-gray-50 pb-2"
+                >
+                  <i className="bi bi-house"></i> Home
+                </Link>
+                <Link
+                  to="/sobre"
+                  onClick={closeMenu}
+                  className="text-lg font-medium text-charcoal hover:text-terracotta flex items-center gap-3 border-b border-gray-50 pb-2"
+                >
+                  <i className="bi bi-info-circle"></i> Sobre
+                </Link>
+
+                <button
+                  onClick={() => {
+                    toggleCart();
+                  }}
+                  className="text-lg font-medium text-charcoal hover:text-terracotta flex items-center gap-3 border-b border-gray-50 pb-2"
+                >
+                  <i className="bi bi-bag"></i> Carrinho ({cart.length})
+                </button>
+
+                {user ? (
+                  <>
+                    <Link
+                      to="/minha-conta"
+                      onClick={closeMenu}
+                      className="text-lg font-medium text-terracotta flex items-center gap-3 border-b border-gray-50 pb-2"
+                    >
+                      <i className="bi bi-person-circle"></i> Minha Conta
+                    </Link>
+                    {user.isAdmin && (
+                      <Link
+                        to="/admin"
+                        onClick={closeMenu}
+                        className="text-lg font-medium text-charcoal hover:text-terracotta flex items-center gap-3 border-b border-gray-50 pb-2"
+                      >
+                        <i className="bi bi-gear-fill"></i> Painel Admin
+                      </Link>
+                    )}
+                    <button
+                      onClick={() => {
+                        localStorage.removeItem("user");
+                        localStorage.removeItem("token");
+                        window.location.reload();
+                      }}
+                      className="text-lg font-medium text-red-500 hover:text-red-700 flex items-center gap-3 pt-2"
+                    >
+                      <i className="bi bi-box-arrow-right"></i> Sair
+                    </button>
+                  </>
+                ) : (
+                  <Link
+                    to="/login"
+                    onClick={closeMenu}
+                    className="bg-terracotta text-white text-center py-3 rounded-xl font-bold hover:bg-opacity-90 transition-all shadow-sm"
+                  >
+                    Entrar / Cadastrar
+                  </Link>
+                )}
+              </div>
+            </div>
+          )}
         </nav>
       </header>
 
@@ -164,48 +244,74 @@ function Header({ user,cart = [], setCart }) {
           >
             <div className="p-6 h-full flex flex-col">
               <div className="flex justify-between items-center mb-6">
-                 <h2 className="text-2xl font-serif font-bold text-charcoal">Seu Carrinho</h2>
-                 <button onClick={toggleCart} className="text-gray-400 hover:text-terracotta transition-colors">
-                    <i className="bi bi-x-lg text-xl"></i>
-                 </button>
+                <h2 className="text-2xl font-serif font-bold text-charcoal">
+                  Seu Carrinho
+                </h2>
+                <button
+                  onClick={toggleCart}
+                  className="text-gray-400 hover:text-terracotta transition-colors"
+                >
+                  <i className="bi bi-x-lg text-xl"></i>
+                </button>
               </div>
-              
+
               {cart.length === 0 ? (
                 <div className="flex-1 flex flex-col items-center justify-center text-warmGray opacity-60">
-                    <i className="bi bi-basket text-6xl mb-4"></i>
-                    <p className="text-lg">Seu carrinho está vazio</p>
-                    <button onClick={toggleCart} className="mt-4 text-terracotta underline text-sm hover:text-charcoal">
-                        Continuar comprando
-                    </button>
+                  <i className="bi bi-basket text-6xl mb-4"></i>
+                  <p className="text-lg">Seu carrinho está vazio</p>
+                  <button
+                    onClick={toggleCart}
+                    className="mt-4 text-terracotta underline text-sm hover:text-charcoal"
+                  >
+                    Continuar comprando
+                  </button>
                 </div>
               ) : (
                 <>
                   <div className="flex-1 overflow-y-auto space-y-4 pr-2">
                     {cart.map((item) => (
-                      <div key={item.uid} className="p-4 bg-gray-50 rounded-xl border border-gray-100 relative group hover:border-terracotta/30 transition-colors">
+                      <div
+                        key={item.uid}
+                        className="p-4 bg-gray-50 rounded-xl border border-gray-100 relative group hover:border-terracotta/30 transition-colors"
+                      >
                         <div className="flex justify-between items-start mb-2">
-                            <h3 className="font-serif font-semibold text-charcoal pr-6">{item.name}</h3>
-                             <button
-                                onClick={() => removeFromCart(item)}
-                                className="text-gray-400 hover:text-red-500 transition-colors absolute top-4 right-4"
-                                title="Remover item"
-                                >
-                                <i className="bi bi-trash"></i>
-                            </button>
+                          <h3 className="font-serif font-semibold text-charcoal pr-6">
+                            {item.name}
+                          </h3>
+                          <button
+                            onClick={() => removeFromCart(item)}
+                            className="text-gray-400 hover:text-red-500 transition-colors absolute top-4 right-4"
+                            title="Remover item"
+                          >
+                            <i className="bi bi-trash"></i>
+                          </button>
                         </div>
-                        
-                        <p className="text-xs text-warmGray uppercase tracking-wider font-semibold mb-1">Itens Inclusos:</p>
+
+                        <p className="text-xs text-warmGray uppercase tracking-wider font-semibold mb-1">
+                          Itens Inclusos:
+                        </p>
                         <ul className="text-sm text-gray-600 mb-3 space-y-1 pl-1">
-                          {item.includedItems.map((includedItem, index) => (
+                          {(Array.isArray(item.includedItems)
+                            ? item.includedItems
+                            : typeof item.includedItems === "string"
+                            ? JSON.parse(item.includedItems || "[]")
+                            : []
+                          ).map((includedItem, index) => (
                             <li key={index} className="flex items-start gap-2">
-                                <span className="text-terracotta">•</span> {includedItem}
+                              <span className="text-terracotta">•</span>{" "}
+                              {includedItem}
                             </li>
                           ))}
-                          {item.includedExtraItems && item.includedExtraItems.map((extraItem, index) => (
-                            <li key={`extra-${index}`} className="flex items-start gap-2 text-terracotta font-medium">
-                               <span>+</span> {extraItem.name} ({extraItem.count})
-                            </li>
-                          ))}
+                          {item.includedExtraItems &&
+                            item.includedExtraItems.map((extraItem, index) => (
+                              <li
+                                key={`extra-${index}`}
+                                className="flex items-start gap-2 text-terracotta font-medium"
+                              >
+                                <span>+</span> {extraItem.name} (
+                                {extraItem.count})
+                              </li>
+                            ))}
                         </ul>
 
                         <div className="flex justify-between items-end mt-4 pt-3 border-t border-gray-200">
@@ -216,7 +322,11 @@ function Header({ user,cart = [], setCart }) {
                             }
                           />
                           <p className="font-bold text-lg text-terracotta">
-                            R$ {(item.price + calcularTotalExtras(item.includedExtraItems)).toFixed(2)}
+                            R${" "}
+                            {(
+                              item.price +
+                              calcularTotalExtras(item.includedExtraItems)
+                            ).toFixed(2)}
                           </p>
                         </div>
                       </div>

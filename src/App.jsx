@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 import Home from "./pages/Home";
 import Sobre from "./pages/Sobre";
@@ -19,8 +15,18 @@ import AdminPanel from "./pages/admin/AdminPanel";
 import MinhaConta from "./pages/client/MinhaConta";
 
 function App() {
-  const [cart, setCart] = useState([]); // Gerenciar o estado do carrinho aqui
+  // Load cart from localStorage or default to empty array
+  const [cart, setCart] = useState(() => {
+    const savedCart = localStorage.getItem("cart");
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
+
   const [user, setUser] = useState(null);
+
+  // Save cart to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }, [cart]);
 
   // Função para comparar os extras
   const areExtrasEqual = (extras1, extras2) => {
@@ -100,7 +106,7 @@ function App() {
     <Router>
       {/* Passa as props relacionadas ao carrinho para o Header */}
       <Header
-      user={user}
+        user={user}
         cart={cart}
         setCart={setCart}
         addToCart={addToCart}
