@@ -14,6 +14,7 @@
 
   - Na pagina Administrador
     [ ] adicionar rastreio de pedido.
+    [] O admistrador deve ser notificado quando um pedido for criado.
 
 ## Funcionalidades a serem corrigidas
 
@@ -22,6 +23,8 @@
 - No painel administrativo, os pedidos não estão mostrando os endereço de entregas!
 - Precisamos melhorar a pagina de pedidos no painel administrativo! Não temos informações sobre os endereços de entregas!
 - Cadastrar produtos com algumas imagens ainda dar erro! Talvez seja por causa do tamanho das imagens!
+- Ao finalizar o pedido, o produto que foi adicionado ao carrinho, não esta sendo removido!
+- Seria bom ter uma funcionalidade para desmarcar os produtos que foram adicionados ao carrinho, mas que não vão ser comprados no momento!
 
 # Todo
 

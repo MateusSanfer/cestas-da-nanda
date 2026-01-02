@@ -77,3 +77,63 @@ const authController = {
 };
 
 module.exports = authController;
+
+authController.updateProfile = async (req, res) => {
+  const { name, password, newPassword } = req.body;
+  const userId = req.user.userId; // Vem do middleware de autenticação
+
+  try {
+    const user = await User.findByPk(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: "Usuário não encontrado" });
+    }
+
+    // Atualização de Nome (Limitado a 1 vez se já tiver sido alterado)
+    if (name && name !== user.name) {
+      if (user.hasChangedName) {
+        return res
+          .status(403)
+          .json({
+            error:
+              "Você já alterou seu nome uma vez. Entre em contato com o suporte.",
+          });
+      }
+      user.name = name;
+      user.hasChangedName = true;
+    }
+
+    // Atualização de Senha
+    if (newPassword) {
+      // Se for trocar senha, a senha atual é OBRIGATÓRIA
+      if (!password) {
+        return res
+          .status(400)
+          .json({ error: "Informe a senha atual para definir uma nova." });
+      }
+
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
+        return res.status(401).json({ error: "Senha atual incorreta." });
+      }
+
+      user.password = await bcrypt.hash(newPassword, 10);
+    }
+
+    await user.save();
+
+    res.json({
+      message: "Perfil atualizado com sucesso!",
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        isAdmin: user.isAdmin,
+        hasChangedName: user.hasChangedName,
+      },
+    });
+  } catch (error) {
+    console.error("Erro ao atualizar perfil:", error);
+    res.status(500).json({ error: "Erro interno no servidor." });
+  }
+};

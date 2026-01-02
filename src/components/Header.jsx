@@ -1,13 +1,81 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import logo from "../assets/images/logo.png";
 import { useNavigate } from "react-router-dom";
 import SeletorQuantidade from "./SeletorQuantidade";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 function Header({ user, cart = [], setCart }) {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+
+  // Notification Logic
+  const [lastOrderId, setLastOrderId] = useState(null);
+  const [soundAllowed, setSoundAllowed] = useState(false); // Browser blocks audio without interaction
+
+  useEffect(() => {
+    // Only run for admins
+    if (user && user.isAdmin) {
+      const checkNewOrders = async () => {
+        try {
+          const response = await axios.get("/api/orders");
+          const orders = response.data;
+
+          if (orders.length > 0) {
+            const latestOrder = orders[0]; // Assuming sorted DESC
+
+            // On first load, just set the ID, don't notify
+            if (lastOrderId === null) {
+              setLastOrderId(latestOrder.id);
+              return;
+            }
+
+            // If ID changed and is larger (Novelty check)
+            if (latestOrder.id > lastOrderId) {
+              // Play Sound
+              const audio = new Audio(
+                "https://actions.google.com/sounds/v1/alarms/beep_short.ogg"
+              );
+              audio.play().catch((e) => console.log("click needed for sound"));
+
+              // Show Toast
+              toast(
+                (t) => (
+                  <div
+                    onClick={() => {
+                      toast.dismiss(t.id);
+                      navigate("/admin");
+                    }}
+                    className="cursor-pointer"
+                  >
+                    <p className="font-bold">
+                      🔔 Novo Pedido #{latestOrder.id}. Bora lá!
+                    </p>
+                    <p className="text-sm">R$ {latestOrder.total}</p>
+                  </div>
+                ),
+                {
+                  duration: 8000,
+                  icon: "💰",
+                  style: { border: "2px solid #D75440" },
+                }
+              );
+
+              setLastOrderId(latestOrder.id);
+            }
+          }
+        } catch (error) {
+          console.error("Polling error", error);
+        }
+      };
+
+      // Poll every 10 seconds (faster for testing)
+      const interval = setInterval(checkNewOrders, 20000);
+      return () => clearInterval(interval);
+    }
+  }, [user, lastOrderId, navigate]);
 
   const toggleCart = () => {
     setIsCartOpen(!isCartOpen);
@@ -104,7 +172,7 @@ function Header({ user, cart = [], setCart }) {
                   to="/sobre"
                   className="hover:text-terracotta transition-colors font-medium flex items-center gap-2 text-sm uppercase tracking-wide"
                 >
-                  Sobre
+                  <i className="bi bi-info-circle"></i> Sobre
                 </Link>
                 {user && (
                   <Link

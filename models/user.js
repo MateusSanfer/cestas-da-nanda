@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
       email: DataTypes.STRING,
       password: DataTypes.STRING, // hash da senha
       isAdmin: DataTypes.BOOLEAN, // identifica se o usuário é admin
+      hasChangedName: DataTypes.BOOLEAN, // controle de troca de nome
     },
     {
       sequelize,

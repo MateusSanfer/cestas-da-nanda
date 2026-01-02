@@ -1,10 +1,13 @@
-const { Order, OrderItem, Basket } = require("../models");
+const { Order, OrderItem, Basket, User } = require("../models");
 
 module.exports = {
   async index(req, res) {
     try {
       const orders = await Order.findAll({
-        include: [{ model: OrderItem, include: [Basket] }],
+        include: [
+          { model: OrderItem, include: [Basket] },
+          { model: User, attributes: ["id", "name", "email"] },
+        ],
         order: [["createdAt", "DESC"]],
       });
 
