@@ -16,7 +16,15 @@ module.exports = (sequelize, DataTypes) => {
     {
       userId: DataTypes.INTEGER,
       total: DataTypes.FLOAT,
-      status: DataTypes.STRING,
+      status: {
+        type: DataTypes.STRING,
+        defaultValue: 'pending'
+      },
+      deliveryAddress: DataTypes.JSON,
+      deliveryDate: DataTypes.DATEONLY,
+      deliveryPeriod: DataTypes.STRING,
+      paymentMethod: DataTypes.STRING,
+      message: DataTypes.TEXT,
     },
     {
       sequelize,

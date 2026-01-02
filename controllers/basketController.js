@@ -2,8 +2,16 @@ const { Basket } = require('../models');
 
 module.exports = {
   async index(req, res) {
-    const baskets = await Basket.findAll();
-    res.json(baskets);
+    const { category } = req.query;
+    const where = category && category !== 'todos' ? { category } : {};
+    
+    try {
+        const baskets = await Basket.findAll({ where });
+        res.json(baskets);
+    } catch (error) {
+        console.error("Error fetching baskets:", error);
+        res.status(500).json({ error: "Erro ao buscar produtos" });
+    }
   },
 
   async show(req, res) {

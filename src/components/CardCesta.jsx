@@ -34,33 +34,34 @@ const CardCesta = ({ basket, addToCart }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-4">
-      <div className="h-48 bg-red-200 rounded-lg mb-4 flex items-center justify-center">
-        {/* Placeholder para imagem */}
-        <img
-          src={basket.image}
-          alt={basket.name}
-          className="w-full h-full object-cover rounded-lg"
-        />
-      </div>
-      <h3 className="text-lg font-semibold mb-2">{basket.name}</h3>
-      <p className="descricao text-gray-600 mb-2">{basket.description}</p>
-      <span className="text-green-600 font-bold">
+    <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 p-5 border border-transparent hover:border-gray-100">
+      <Link to={`/cesta/${generateSlug(basket.name, basket.id)}`} className="block">
+        <div className="h-56 bg-cream rounded-xl mb-5 flex items-center justify-center overflow-hidden relative group">
+            <img
+            src={basket.image || null}
+            alt={basket.name}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+        </div>
+        <h3 className="text-xl font-serif font-bold mb-2 text-charcoal group-hover:text-terracotta transition-colors">{basket.name}</h3>
+      </Link>
+      <p className="descricao text-warmGray text-sm mb-4 line-clamp-2">{basket.description}</p>
+      <span className="text-terracotta font-bold text-lg block mb-4">
         R$ {basket.price.toFixed(2)}
       </span>
 
-      <div className="flex justify-between mt-4">
-        <Link to={`/cesta/${generateSlug(basket.name, basket.id)}`}> 
-          <button className=" verMais bg-blue-500 text-white px-2 py-2 rounded-lg hover:bg-blue-600 transition duration-200 ">
-            Ver mais detalhes
-          </button>
-        </Link>
+      <div className="flex flex-col gap-3 mt-auto">
         <button
           onClick={handleAddToCart}
-          className="botaoAdd text-white px-2 py-2 rounded-lg transition duration-200"
+          className="w-full bg-terracotta text-white font-medium py-3 rounded-full hover:bg-opacity-90 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5 active:translate-y-0"
         >
           Adicionar ao Carrinho
         </button>
+        <Link to={`/cesta/${generateSlug(basket.name, basket.id)}`} className="text-center"> 
+          <span className="text-terracotta text-sm font-semibold hover:underline">
+            Ver detalhes
+          </span>
+        </Link>
       </div>
     </div>
   );

@@ -16,6 +16,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Toaster } from "react-hot-toast";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminPanel from "./pages/admin/AdminPanel";
+import MinhaConta from "./pages/client/MinhaConta";
 
 function App() {
   const [cart, setCart] = useState([]); // Gerenciar o estado do carrinho aqui
@@ -135,11 +136,16 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/minha-conta"
+          element={
+            <ProtectedRoute>
+              <MinhaConta />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
-      <>
-        <Toaster position="top-right" />
-        <Routes>...</Routes>
-      </>
+      <Toaster position="top-right" />
     </Router>
   );
 }

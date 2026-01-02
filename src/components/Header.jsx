@@ -62,77 +62,85 @@ function Header({ user,cart = [], setCart }) {
 
   return (
     <>
-      <header>
-        <nav className="shadow-lg bg-black text-white">
-          <div className="max-w-6xl mx-auto px-2">
-            <div className="flex justify-between items-center py-3">
+      <header className="fixed w-full z-50">
+        <nav className="shadow-sm bg-cream/90 backdrop-blur-md text-charcoal transition-all">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center py-4">
               {/* Logo */}
-              <div className="flex items-center">
+              <div className="flex items-center gap-3">
+                <Link
+                  to="/"
+                  >
                 <img
                   src={logo}
                   alt="Logo Cestas Da Nanda"
-                  className="h-10 w-10"
+                  className="h-12 w-12 rounded-full border-2 border-terracotta object-cover"
                 />
-                <span className="text-2xl font-bold ml-2">Cestas Da Nanda</span>
+                
+                <span className="text-2xl font-serif font-bold text-terracotta tracking-tight">Cestas Da Nanda</span>
+                </Link>
               </div>
 
               {/* Links de Navegação */}
-              <div className="flex space-x-6 items-center">
+              <div className="flex space-x-8 items-center">
                 <Link
                   to="/"
-                  className="hover:text-yellow-400 flex items-center gap-1"
+                  className="hover:text-terracotta transition-colors font-medium flex items-center gap-2 text-sm uppercase tracking-wide"
                 >
-                  <i className="bi bi-house text-2xl "></i> Home
+                  <i className="bi bi-house text-lg"></i> Home
                 </Link>
                 <Link
                   to="/sobre"
-                  className="hover:text-yellow-400 flex items-center gap-1"
+                  className="hover:text-terracotta transition-colors font-medium flex items-center gap-2 text-sm uppercase tracking-wide"
                 >
                   Sobre
                 </Link>
-                <Link
-                  to="/pagamento"
-                  className="hover:text-yellow-400 flex items-center gap-1"
-                >
-                  <i className="bi bi-wallet2 text-2xl"></i> Pagamento
-                </Link>
-                <Link
-                  to="/login"
-                  className="hover:text-yellow-400 flex items-center gap-1"
-                >
-                  <i className="bi bi-box-arrow-in-left text-2xl"></i> Login
-                </Link>
+                {user && (
+                    <Link
+                    to="/minha-conta"
+                    className="hover:text-terracotta transition-colors font-medium flex items-center gap-2 text-sm uppercase tracking-wide"
+                    >
+                    <i className="bi bi-person-lines-fill text-lg"></i> Minha Conta
+                    </Link>
+                )}
+                {user ? (
+                   <button
+                    onClick={() => {
+                        localStorage.removeItem('user');
+                        localStorage.removeItem('token'); // Assuming token is stored
+                        window.location.reload();
+                    }}
+                    className="hover:text-terracotta transition-colors font-medium flex items-center gap-2 text-sm uppercase tracking-wide"
+                  >
+                    <i className="bi bi-box-arrow-right text-lg"></i> Sair
+                  </button>
+                ) : (
+                  <Link
+                    to="/login"
+                    className="hover:text-terracotta transition-colors font-medium flex items-center gap-2 text-sm uppercase tracking-wide"
+                  >
+                    <i className="bi bi-person text-lg"></i> Login
+                  </Link>
+                )}
 
                 {/* Link do Admin apenas se for admin */}
                 {user?.isAdmin && (
                   <Link
                     to="/admin"
-                    className="hover:text-yellow-400 flex items-center gap-1"
+                    className="text-terracotta font-bold hover:text-charcoal transition-colors flex items-center gap-2 text-sm uppercase tracking-wide"
                   >
-                    <i className="bi bi-person-gear"></i> Administrador
+                    <i className="bi bi-gear-fill"></i> Admin
                   </Link>
                 )}
 
                 {/* Botão do Carrinho */}
                 <button
                   onClick={toggleCart}
-                  className="relative p-1 focus:outline-none"
+                  className="relative p-2 text-charcoal hover:text-terracotta transition-colors"
                 >
-                  <svg
-                    className="h-9 w-9 text-gray-500 "
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-                    />
-                  </svg>
+                  <i className="bi bi-bag text-2xl"></i>
                   {cart.length > 0 && (
-                    <span className="cart-badge absolute -top-2 -right-2 bg-red-600 text-white text-xs px-2 py-1 rounded-full">
+                    <span className="absolute -top-1 -right-1 bg-terracotta text-white text-xs font-bold h-5 w-5 flex items-center justify-center rounded-full border-2 border-cream">
                       {cart.length}
                     </span>
                   )}
@@ -144,87 +152,93 @@ function Header({ user,cart = [], setCart }) {
       </header>
 
       {/* Modal do Carrinho */}
+      {/* Modal do Carrinho */}
       {isCartOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex justify-end"
+          className="fixed inset-0 bg-charcoal/30 backdrop-blur-sm z-50 flex justify-end transition-opacity"
           onClick={toggleCart}
         >
           <div
-            className="absolute right-0 top-0 h-full w-96 bg-white shadow-xl overflow-y-auto"
+            className="absolute right-0 top-0 h-full w-full sm:w-96 bg-white shadow-2xl overflow-y-auto transform transition-transform duration-300"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="p-6">
-              <h2 className="text-2xl font-bold mb-4">Carrinho</h2>
+            <div className="p-6 h-full flex flex-col">
+              <div className="flex justify-between items-center mb-6">
+                 <h2 className="text-2xl font-serif font-bold text-charcoal">Seu Carrinho</h2>
+                 <button onClick={toggleCart} className="text-gray-400 hover:text-terracotta transition-colors">
+                    <i className="bi bi-x-lg text-xl"></i>
+                 </button>
+              </div>
+              
               {cart.length === 0 ? (
-                <div className="text-gray-500">Seu carrinho está vazio</div>
+                <div className="flex-1 flex flex-col items-center justify-center text-warmGray opacity-60">
+                    <i className="bi bi-basket text-6xl mb-4"></i>
+                    <p className="text-lg">Seu carrinho está vazio</p>
+                    <button onClick={toggleCart} className="mt-4 text-terracotta underline text-sm hover:text-charcoal">
+                        Continuar comprando
+                    </button>
+                </div>
               ) : (
-                <div>
-                  {cart.map((item) => (
-                    <div key={item.uid} className="mb-4 p-4 border rounded-lg">
-                      <h3 className="font-semibold">{item.name}</h3>
-                      <p className="text-gray-600 text-sm mb-2">
-                        Itens Inclusos:
-                      </p>
-                      <ul className="list-disc list-inside text-sm text-gray-600 mb-2">
-                        {item.includedItems.map((includedItem, index) => (
-                          <li key={index}>{includedItem}</li>
-                        ))}
-                        {item.includedExtraItems.map((extraItem, index) => (
-                          <li key={index}>
-                            {extraItem.name} ({extraItem.count})
-                          </li>
-                        ))}
-                      </ul>
-                      <div className="flex justify-between items-center mt-2">
-                        <p className="text-gray-600">
-                          R${" "}
-                          {(
-                            item.price +
-                            calcularTotalExtras(item.includedExtraItems)
-                          ).toFixed(2)}
-                        </p>
-                        <button
-                          onClick={() => removeFromCart(item)}
-                          className="text-red-500"
-                        >
-                          <svg
-                            className="h-6 w-6"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                            />
-                          </svg>
-                        </button>
+                <>
+                  <div className="flex-1 overflow-y-auto space-y-4 pr-2">
+                    {cart.map((item) => (
+                      <div key={item.uid} className="p-4 bg-gray-50 rounded-xl border border-gray-100 relative group hover:border-terracotta/30 transition-colors">
+                        <div className="flex justify-between items-start mb-2">
+                            <h3 className="font-serif font-semibold text-charcoal pr-6">{item.name}</h3>
+                             <button
+                                onClick={() => removeFromCart(item)}
+                                className="text-gray-400 hover:text-red-500 transition-colors absolute top-4 right-4"
+                                title="Remover item"
+                                >
+                                <i className="bi bi-trash"></i>
+                            </button>
+                        </div>
+                        
+                        <p className="text-xs text-warmGray uppercase tracking-wider font-semibold mb-1">Itens Inclusos:</p>
+                        <ul className="text-sm text-gray-600 mb-3 space-y-1 pl-1">
+                          {item.includedItems.map((includedItem, index) => (
+                            <li key={index} className="flex items-start gap-2">
+                                <span className="text-terracotta">•</span> {includedItem}
+                            </li>
+                          ))}
+                          {item.includedExtraItems && item.includedExtraItems.map((extraItem, index) => (
+                            <li key={`extra-${index}`} className="flex items-start gap-2 text-terracotta font-medium">
+                               <span>+</span> {extraItem.name} ({extraItem.count})
+                            </li>
+                          ))}
+                        </ul>
+
+                        <div className="flex justify-between items-end mt-4 pt-3 border-t border-gray-200">
+                          <SeletorQuantidade
+                            quantidade={item.quantidade}
+                            setQuantidade={(novaQuantidade) =>
+                              atualizarCarrinho(item.uid, novaQuantidade)
+                            }
+                          />
+                          <p className="font-bold text-lg text-terracotta">
+                            R$ {(item.price + calcularTotalExtras(item.includedExtraItems)).toFixed(2)}
+                          </p>
+                        </div>
                       </div>
-                      <SeletorQuantidade
-                        quantidade={item.quantidade}
-                        setQuantidade={(novaQuantidade) =>
-                          atualizarCarrinho(item.uid, novaQuantidade)
-                        }
-                      />
-                    </div>
-                  ))}
-                  <div className="mt-4 border-t pt-4">
-                    <div className="flex justify-between items-center mb-4">
-                      <span className="font-semibold">Total:</span>
-                      <span className="text-xl font-bold">
+                    ))}
+                  </div>
+
+                  <div className="mt-auto pt-6 border-t border-gray-100 bg-white">
+                    <div className="flex justify-between items-center mb-4 text-charcoal">
+                      <span className="font-medium">Subtotal</span>
+                      <span className="text-2xl font-serif font-bold">
                         R$ {cartTotal.toFixed(2)}
                       </span>
                     </div>
                     <button
                       onClick={checkout}
-                      className="w-full bg-pink-500 text-white py-3 rounded-lg hover:bg-pink-600 transition duration-200"
+                      className="w-full bg-terracotta text-white font-bold py-4 rounded-full hover:bg-opacity-90 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 active:translate-y-0 flex justify-center items-center gap-2"
                     >
-                      Finalizar Pedido
+                      <span>Finalizar Pedido</span>
+                      <i className="bi bi-arrow-right"></i>
                     </button>
                   </div>
-                </div>
+                </>
               )}
             </div>
           </div>

@@ -20,7 +20,8 @@ module.exports = (sequelize, DataTypes) => {
     image: DataTypes.STRING,
     images: DataTypes.JSON,
     includedItems: DataTypes.JSON,
-    availableExtras: DataTypes.JSON
+    availableExtras: DataTypes.JSON,
+    category: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Basket',
