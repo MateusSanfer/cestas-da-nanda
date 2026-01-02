@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-
 const initialState = {
   name: "",
   description: "",
   price: "",
+  category: "cesta",
   mainImage: "",
   images: [],
   includedItems: [],
@@ -19,11 +19,31 @@ const BasketForm = ({ basket, onClose }) => {
 
   useEffect(() => {
     if (basket) {
+        // Helper to safe parse JSON
+        const safeParse = (data) => {
+            if (!data) return [];
+            if (Array.isArray(data)) return data;
+            try {
+                return JSON.parse(data);
+            } catch (e) {
+                console.error("Error parsing data:", e);
+                return [];
+            }
+        };
+
+        let safeImages = safeParse(basket.images);
+        let safeIncludedItems = safeParse(basket.includedItems);
+        let safeAvailableExtras = safeParse(basket.availableExtras);
+
       setFormData({
         ...initialState,
         ...basket,
+         // Ensure category is set if existing, or default
+        category: basket.category || "cesta", 
         mainImage: basket.image || "",
-        images: basket.images || [],
+        images: safeImages,
+        includedItems: safeIncludedItems,
+        availableExtras: safeAvailableExtras,
       });
     } else {
       setFormData(initialState);
@@ -89,6 +109,9 @@ const BasketForm = ({ basket, onClose }) => {
       images: formData.images,
     };
     
+    // Validate Category
+    if(!payload.category) payload.category = 'cesta';
+
     try {
       const token = localStorage.getItem("token");
       const config = { headers: { Authorization: `Bearer ${token}` } };
@@ -97,194 +120,243 @@ const BasketForm = ({ basket, onClose }) => {
         basket ? `/${basket.id}` : ""
       }`;
 
+      // Show loading toast? (Optional, but good UX)
+      // toast.loading('Salvando...', { id: 'saving' });
+
       basket
         ? await axios.put(url, payload, config)
         : await axios.post(url, payload, config);
 
+      // toast.dismiss('saving');
+      // toast.success(basket ? "Produto atualizado com sucesso!" : "Produto criado com sucesso!");
+      
       onClose();
     } catch (error) {
-      console.error("Erro ao salvar cesta:", error);
+      console.error("Erro ao salvar produto:", error);
+      // toast.error("Erro ao salvar produto. Verifique os dados.");
+      alert("Erro ao salvar produto. Verifique se preencheu todos os campos corretamente.");
     }
   };
-
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-6 border p-6 rounded-md shadow-sm bg-white"
+      className="space-y-8 bg-gray-50/50 p-8 rounded-2xl border border-gray-100"
     >
-      <h2 className="text-xl font-bold text-gray-800">
-        {basket ? "Editar Cesta" : "Nova Cesta"}
-      </h2>
+      {/* Dados Básicos */}
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+        <div className="md:col-span-8 space-y-2">
+            <label className="text-sm font-semibold text-charcoal">Nome do Produto</label>
+            <input
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Ex: Cesta Amanhecer"
+                className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-terracotta/20 focus:border-terracotta outline-none transition-all"
+                required
+            />
+        </div>
+        <div className="md:col-span-4 space-y-2">
+             <label className="text-sm font-semibold text-charcoal">Categoria</label>
+            <div className="relative">
+                <select
+                name="category"
+                value={formData.category}
+                onChange={handleChange}
+                className="w-full p-3 border border-gray-200 rounded-xl bg-white appearance-none focus:ring-2 focus:ring-terracotta/20 focus:border-terracotta outline-none transition-all"
+                >
+                    <option value="cesta">Cesta</option>
+                    <option value="flor">Flores</option>
+                    <option value="lembrancinha">Lembrancinhas</option>
+                    <option value="kit">Kits</option>
+                    <option value="personalizados">Personalizados</option>
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
+                    <i className="bi bi-chevron-down text-xs"></i>
+                </div>
+            </div>
+        </div>
+      </div>
+      
+       <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+            <div className="md:col-span-4 space-y-2">
+                <label className="text-sm font-semibold text-charcoal">Preço (R$)</label>
+                <input
+                    type="number"
+                    name="price"
+                    value={formData.price}
+                    onChange={handleChange}
+                    placeholder="0.00"
+                    className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-terracotta/20 focus:border-terracotta outline-none transition-all"
+                    required
+                />
+            </div>
+       </div>
 
-      {/* Nome, descrição, preço */}
-      <div className="flex gap-2">
-        <input
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          placeholder="Nome"
-          className="w-full p-2 border rounded"
-          required
-        />
-        <input
-          type="number"
-          name="price"
-          value={formData.price}
-          onChange={handleChange}
-          placeholder="Preço"
-          className="w-full p-2 border rounded"
-          required
+      <div className="space-y-2">
+        <label className="text-sm font-semibold text-charcoal">Descrição Detalhada</label>
+        <textarea
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            placeholder="Descreva os detalhes e o encanto deste produto..."
+            className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-terracotta/20 focus:border-terracotta outline-none transition-all"
+            rows="4"
+            required
         />
       </div>
-      <textarea
-        name="description"
-        value={formData.description}
-        onChange={handleChange}
-        placeholder="Descrição"
-        className="w-full p-2 border rounded"
-        required
-      />
 
-      {/* Imagens */}
-      <div className="space-y-2">
-        <label className="block font-medium">Imagem Principal:</label>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => handleImageUpload(e)}
-        />
-        {formData.mainImage && (
-          <img
-            src={formData.mainImage}
-            alt="Principal"
-            className="h-32 mt-2 rounded object-cover"
-          />
-        )}
-
-        <label className="block font-medium mt-4">Miniaturas:</label>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => handleImageUpload(e, "images", true)}
-        />
-        {formData.images.length > 0 && (
-          <div className="grid grid-cols-3 gap-2 mt-3">
-            {formData.images.map((url, i) => (
-              <div key={i} className="relative group">
+      {/* Upload de Imagens */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4 border-t border-gray-200">
+        <div className="space-y-4">
+            <label className="block text-sm font-semibold text-charcoal">📸 Imagem Principal</label>
+            <div className="flex items-start gap-4">
+                <label className="cursor-pointer bg-white border border-dashed border-gray-300 rounded-xl p-4 hover:border-terracotta hover:bg-orange-50 transition-all flex flex-col items-center justify-center w-32 h-32 text-center text-xs text-gray-500">
+                    <i className="bi bi-image text-2xl mb-1 text-gray-400"></i>
+                    Upload
+                    <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => handleImageUpload(e)}
+                    />
+                </label>
+                {formData.mainImage && (
                 <img
-                  src={url}
-                  alt={`Thumb ${i}`}
-                  className="h-24 w-full object-cover rounded"
+                    src={formData.mainImage}
+                    alt="Principal"
+                    className="w-32 h-32 rounded-xl object-cover shadow-sm border border-gray-100"
+                />
+                )}
+            </div>
+        </div>
+
+        <div className="space-y-4">
+            <label className="block text-sm font-semibold text-charcoal">🖼️ Galeria (Miniaturas)</label>
+            <div className="flex items-start gap-4 flex-wrap">
+                 <label className="cursor-pointer bg-white border border-dashed border-gray-300 rounded-xl p-4 hover:border-terracotta hover:bg-orange-50 transition-all flex flex-col items-center justify-center w-24 h-24 text-center text-xs text-gray-500">
+                    <i className="bi bi-plus-lg text-2xl mb-1 text-gray-400"></i>
+                    Add
+                    <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => handleImageUpload(e, "images", true)}
+                    />
+                </label>
+                {formData.images.map((url, i) => (
+                <div key={i} className="relative group w-24 h-24">
+                    <img
+                    src={url}
+                    alt={`Thumb ${i}`}
+                    className="w-full h-full object-cover rounded-xl shadow-sm"
+                    />
+                    <button
+                    type="button"
+                    onClick={() => removeFromArray("images", i)}
+                    className="absolute -top-2 -right-2 bg-white text-red-500 hover:text-red-700 h-6 w-6 rounded-full shadow-md flex items-center justify-center transition-all opacity-0 group-hover:opacity-100"
+                    >
+                    <i className="bi bi-x"></i>
+                    </button>
+                </div>
+                ))}
+            </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4 border-t border-gray-200">
+            {/* Itens Inclusos */}
+            <fieldset>
+                <legend className="text-sm font-semibold text-charcoal mb-4 flex items-center gap-2">
+                    <i className="bi bi-check2-circle text-terracotta"></i> Itens Inclusos na Cesta
+                </legend>
+                <div className="flex gap-2 mb-3">
+                <input
+                    type="text"
+                    value={includedItem}
+                    onChange={(e) => setIncludedItem(e.target.value)}
+                    placeholder="Ex: 1x Caneca de Porcelana"
+                    className="flex-1 p-2 border border-gray-200 rounded-lg text-sm focus:border-terracotta outline-none"
+                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddIncludedItem())}
                 />
                 <button
-                  type="button"
-                  onClick={() => removeFromArray("images", i)}
-                  className="absolute top-1 right-1 bg-red-500 text-white text-xs px-2 rounded opacity-80 group-hover:opacity-100"
+                    type="button"
+                    onClick={handleAddIncludedItem}
+                    className="bg-charcoal text-white px-4 py-2 rounded-lg text-sm hover:bg-opacity-90 transition"
                 >
-                  X
+                    Add
                 </button>
-              </div>
-            ))}
-          </div>
-        )}
+                </div>
+                <ul className="space-y-2">
+                {formData.includedItems.map((item, i) => (
+                    <li key={i} className="flex justify-between items-center bg-white p-2 px-3 rounded-lg border border-gray-100 text-sm">
+                    <span className="text-gray-600">{item}</span>
+                    <button
+                        type="button"
+                        onClick={() => removeFromArray("includedItems", i)}
+                        className="text-gray-400 hover:text-red-500 transition-colors"
+                    >
+                        <i className="bi bi-trash"></i>
+                    </button>
+                    </li>
+                ))}
+                </ul>
+            </fieldset>
+
+            {/* Itens Extras */}
+            <fieldset>
+                <legend className="text-sm font-semibold text-charcoal mb-4 flex items-center gap-2">
+                    <i className="bi bi-plus-circle text-terracotta"></i> Opções de Extras (Upsell)
+                </legend>
+                <div className="flex gap-2 mb-3">
+                <input
+                    type="text"
+                    value={extra.name}
+                    onChange={(e) => setExtra((prev) => ({ ...prev, name: e.target.value }))}
+                    placeholder="Item (Ex: Pelúcia)"
+                    className="flex-1 p-2 border border-gray-200 rounded-lg text-sm focus:border-terracotta outline-none"
+                />
+                <input
+                    type="number"
+                    value={extra.price}
+                    onChange={(e) => setExtra((prev) => ({ ...prev, price: e.target.value }))}
+                    placeholder="R$"
+                    className="w-20 p-2 border border-gray-200 rounded-lg text-sm focus:border-terracotta outline-none"
+                />
+                <button
+                    type="button"
+                    onClick={handleAddExtra}
+                    className="bg-charcoal text-white px-4 py-2 rounded-lg text-sm hover:bg-opacity-90 transition"
+                >
+                    Add
+                </button>
+                </div>
+                <ul className="space-y-2">
+                {formData.availableExtras.map((ex, i) => (
+                    <li key={i} className="flex justify-between items-center bg-white p-2 px-3 rounded-lg border border-gray-100 text-sm">
+                    <span className="text-gray-600 font-medium">{ex.name} <span className="text-terracotta ml-1">+ R$ {ex.price.toFixed(2)}</span></span>
+                    <button
+                        type="button"
+                        onClick={() => removeFromArray("availableExtras", i)}
+                        className="text-gray-400 hover:text-red-500 transition-colors"
+                    >
+                         <i className="bi bi-trash"></i>
+                    </button>
+                    </li>
+                ))}
+                </ul>
+            </fieldset>
       </div>
 
-      {/* Itens inclusos */}
-      <fieldset className="border-t pt-4">
-        <legend className="font-semibold mb-2">Itens Inclusos</legend>
-        <div className="flex gap-2 mb-2">
-          <input
-            type="text"
-            value={includedItem}
-            onChange={(e) => setIncludedItem(e.target.value)}
-            placeholder="Ex: 1 x Caneca"
-            className="flex-1 p-2 border rounded"
-          />
-          <button
-            type="button"
-            onClick={handleAddIncludedItem}
-            className="bg-blue-500 text-white px-3 rounded hover:bg-blue-600"
-          >
-            Adicionar
-          </button>
-        </div>
-        <ul className="space-y-1">
-          {formData.includedItems.map((item, i) => (
-            <li
-              key={i}
-              className="flex justify-between bg-gray-100 p-2 rounded"
-            >
-              <span>{item}</span>
-              <button
-                type="button"
-                onClick={() => removeFromArray("includedItems", i)}
-                className="text-red-600 hover:underline text-sm"
-              >
-                Remover
-              </button>
-            </li>
-          ))}
-        </ul>
-      </fieldset>
-
-      {/* Itens Extras */}
-      <fieldset className="border-t pt-4">
-        <legend className="font-semibold mb-2">Itens Extras</legend>
-        <div className="flex gap-2 mb-2">
-          <input
-            type="text"
-            value={extra.name}
-            onChange={(e) =>
-              setExtra((prev) => ({ ...prev, name: e.target.value }))
-            }
-            placeholder="Nome do item"
-            className="flex-1 p-2 border rounded"
-          />
-          <input
-            type="number"
-            value={extra.price}
-            onChange={(e) =>
-              setExtra((prev) => ({ ...prev, price: e.target.value }))
-            }
-            placeholder="Preço"
-            className="w-24 p-2 border rounded"
-          />
-          <button
-            type="button"
-            onClick={handleAddExtra}
-            className="bg-green-500 text-white px-3 rounded hover:bg-green-600"
-          >
-            Adicionar
-          </button>
-        </div>
-        <ul className="space-y-1">
-          {formData.availableExtras.map((extra, i) => (
-            <li
-              key={i}
-              className="flex justify-between bg-gray-100 p-2 rounded"
-            >
-              <span>
-                {extra.name} - R$ {extra.price.toFixed(2)}
-              </span>
-              <button
-                type="button"
-                onClick={() => removeFromArray("availableExtras", i)}
-                className="text-red-600 hover:underline text-sm"
-              >
-                Remover
-              </button>
-            </li>
-          ))}
-        </ul>
-      </fieldset>
-
-      <button
-        type="submit"
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-      >
-        {basket ? "Salvar Alterações" : "Criar Cesta"}
-      </button>
+      <div className="pt-6 flex justify-end">
+        <button
+            type="submit"
+            className="bg-terracotta text-white font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-xl hover:bg-opacity-90 transition-all transform hover:-translate-y-1 active:translate-y-0 text-lg"
+        >
+            <i className="bi bi-check-lg mr-2"></i>
+            {basket ? "Salvar Alterações" : "Cadastrar Produto"}
+        </button>
+      </div>
     </form>
   );
 };

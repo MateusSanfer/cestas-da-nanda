@@ -2,8 +2,13 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast"; // Assuming react-hot-toast is installed (it was in package.json)
 
-function Pagamento({ cart }) {
+function Pagamento({ cart }) { // Assuming user might be passed, if not we handle it
+  // Retrieve user from local storage if available
+  const storedUser = localStorage.getItem("user");
+  const currentUser = storedUser ? JSON.parse(storedUser) : null;
+
   const [cep, setCep] = useState("");
   const [address, setAddress] = useState({
     rua: "",
@@ -13,6 +18,11 @@ function Pagamento({ cart }) {
     estado: "",
   });
   const [paymentMethod, setPaymentMethod] = useState("");
+  const [deliveryDate, setDeliveryDate] = useState("");
+  const [deliveryPeriod, setDeliveryPeriod] = useState("");
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  
   const navigate = useNavigate();
 
   // Função para buscar o endereço pelo CEP usando a API do ViaCEP
@@ -24,141 +34,274 @@ function Pagamento({ cart }) {
         );
         const data = response.data;
         if (data.erro) {
-          alert("CEP inválido!");
+          toast.error("CEP inválido!");
           return;
         }
         setAddress({
           rua: data.logradouro,
-          numero: data.numero,
+          numero: data.numero || "",
           bairro: data.bairro,
           cidade: data.localidade,
           estado: data.uf,
         });
       } catch (error) {
-        alert("Erro ao buscar CEP. Tente novamente.");
+        toast.error("Erro ao buscar CEP.");
       }
     } else {
-      alert("Digite um CEP válido com 8 dígitos.");
+      toast.error("Digite um CEP válido com 8 dígitos.");
     }
   };
 
   // Calcular o total do carrinho
-  const total = cart
-    .reduce((acc, item) => {
-      // Calcula o total dos extras e multiplica pela quantidade
+  const calculateTotal = () => {
+    return cart.reduce((acc, item) => {
       const extrasTotal = item.includedExtraItems
         ? item.includedExtraItems.reduce(
             (sum, extra) => sum + extra.price * extra.count,
             0
           )
         : 0;
-
       return acc + (item.price + extrasTotal) * item.quantidade;
-    }, 0)
-    .toFixed(2);
+    }, 0);
+  };
+
+  const total = calculateTotal().toFixed(2);
 
   // Função para finalizar o pedido
-  const handleOrder = () => {
-    if (!paymentMethod || !cep) {
-      alert("Preencha todos os campos antes de finalizar a compra.");
+  const handleOrder = async () => {
+    if (!paymentMethod || !cep || !address.rua || !address.numero || !deliveryDate || !deliveryPeriod) {
+      toast.error("Preencha todos os campos obrigatórios.");
       return;
     }
-    alert("Pedido realizado com sucesso!");
-    navigate("/confirmacao");
+
+    setLoading(true);
+
+    const items = cart.map(item => {
+        const extrasTotal = item.includedExtraItems
+        ? item.includedExtraItems.reduce(
+            (sum, extra) => sum + extra.price * extra.count,
+            0
+          )
+        : 0;
+        
+        return {
+            basketId: item.id, // Ensure this matches DB ID
+            quantity: item.quantidade,
+            extras: item.includedExtraItems,
+            subtotal: (item.price + extrasTotal) * item.quantidade
+        };
+    });
+
+    const payload = {
+        userId: currentUser ? currentUser.id : null, 
+        items,
+        total: parseFloat(total),
+        deliveryAddress: {
+            zipCode: cep,
+            street: address.rua,
+            number: address.numero,
+            neighborhood: address.bairro,
+            city: address.cidade,
+            state: address.estado
+        },
+        deliveryDate,
+        deliveryPeriod,
+        paymentMethod,
+        message
+    };
+
+    try {
+        await axios.post('/api/orders', payload);
+        toast.success("Pedido realizado com sucesso!");
+        // Clear cart logic should be here (via prop function or context)
+        // For now just navigate
+        navigate("/confirmacao");
+    } catch (error) {
+        console.error(error);
+        toast.error("Erro ao finalizar pedido. Tente novamente.");
+    } finally {
+        setLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="p-8 bg-white rounded-lg shadow-lg max-w-lg w-full">
-        <h2 className="text-2xl font-semibold mb-6">Finalizar Pedido</h2>
+    <div className="min-h-screen flex items-center justify-center p-4 bg-cream font-sans">
+      <div className="bg-white rounded-2xl shadow-xl max-w-3xl w-full p-8 sm:p-10 border border-gray-100">
+        <h2 className="text-4xl font-serif font-bold mb-10 text-center text-charcoal">Finalizar Pedido</h2>
 
-        {/* CEP */}
-        <div className="mb-4">
-          <label className="block font-medium">CEP</label>
-          <input
-            type="text"
-            value={cep}
-            onChange={(e) => setCep(e.target.value)}
-            maxLength="8"
-            className="w-full p-2 border rounded"
-          />
-          <button
-            type="button"
-            onClick={fetchAddress}
-            className="mt-2 bg-blue-500 text-white px-4 py-2 rounded"
-          >
-            Buscar Endereço
-          </button>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+            {/* Coluna 1: Endereço */}
+            <div className="space-y-6">
+                <h3 className="text-xl font-serif font-semibold mb-4 border-b border-gray-100 pb-2 text-terracotta flex items-center gap-2">
+                    <i className="bi bi-geo-alt"></i> Entrega
+                </h3>
+                
+                <div>
+                  <label className="block text-sm font-medium text-warmGray mb-1">CEP</label>
+                  <div className="flex gap-2">
+                    <input
+                        type="text"
+                        value={cep}
+                        onChange={(e) => setCep(e.target.value.replace(/\D/g, ''))}
+                        maxLength="8"
+                        className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-terracotta/50 focus:border-terracotta outline-none transition-all"
+                        placeholder="00000-000"
+                    />
+                    <button
+                        type="button"
+                        onClick={fetchAddress}
+                        className="bg-charcoal text-white px-5 py-2 rounded-lg hover:bg-opacity-90 transition shadow-sm"
+                    >
+                        Buscar
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-warmGray mb-1">Rua</label>
+                  <input
+                    type="text"
+                    value={address.rua}
+                    readOnly
+                    className="w-full p-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-500"
+                  />
+                </div>
+
+                <div className="flex gap-4">
+                    <div className="w-1/3">
+                        <label className="block text-sm font-medium text-warmGray mb-1">Número</label>
+                        <input
+                            type="text"
+                            value={address.numero}
+                            onChange={(e) => setAddress({ ...address, numero: e.target.value })}
+                            className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-terracotta/50 focus:border-terracotta outline-none transition-all"
+                        />
+                    </div>
+                    <div className="w-2/3">
+                        <label className="block text-sm font-medium text-warmGray mb-1">Bairro</label>
+                        <input
+                            type="text"
+                            value={address.bairro}
+                            readOnly
+                            className="w-full p-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-500"
+                        />
+                    </div>
+                </div>
+                 <div className="flex gap-4">
+                    <div className="w-2/3">
+                        <label className="block text-sm font-medium text-warmGray mb-1">Cidade</label>
+                        <input
+                            type="text"
+                            value={address.cidade}
+                            readOnly
+                            className="w-full p-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-500"
+                        />
+                    </div>
+                    <div className="w-1/3">
+                        <label className="block text-sm font-medium text-warmGray mb-1">UF</label>
+                        <input
+                            type="text"
+                            value={address.estado}
+                            readOnly
+                            className="w-full p-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-500"
+                        />
+                    </div>
+                </div>
+            </div>
+
+            {/* Coluna 2: Detalhes e Pagamento */}
+            <div className="space-y-6">
+                <h3 className="text-xl font-serif font-semibold mb-4 border-b border-gray-100 pb-2 text-terracotta flex items-center gap-2">
+                    <i className="bi bi-calendar-event"></i> Agendamento & Pagamento
+                </h3>
+
+                {/* Data e Periodo */}
+                <div className="grid grid-cols-2 gap-4">
+                    <div>
+                        <label className="block text-sm font-medium text-warmGray mb-1">Data da Entrega</label>
+                        <input 
+                            type="date" 
+                            className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-terracotta/50 focus:border-terracotta outline-none transition-all text-gray-600"
+                            value={deliveryDate}
+                            onChange={(e) => setDeliveryDate(e.target.value)}
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-warmGray mb-1">Período</label>
+                        <div className="relative">
+                            <select 
+                                className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-terracotta/50 focus:border-terracotta outline-none transition-all appearance-none bg-white font-medium text-gray-600"
+                                value={deliveryPeriod}
+                                onChange={(e) => setDeliveryPeriod(e.target.value)}
+                            >
+                                <option value="">Selecione...</option>
+                                <option value="Manhã">Manhã (08h - 12h)</option>
+                                <option value="Tarde">Tarde (13h - 18h)</option>
+                            </select>
+                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
+                                <i className="bi bi-chevron-down text-xs"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Mensagem */}
+                <div>
+                    <label className="block text-sm font-medium text-warmGray mb-1">Cartão de Presente <span className="text-gray-400 font-normal">(Opcional)</span></label>
+                    <textarea 
+                        className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-terracotta/50 focus:border-terracotta outline-none transition-all"
+                        rows="3"
+                        placeholder="Escreva uma mensagem carinhosa..."
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                    ></textarea>
+                </div>
+
+                {/* Pagamento */}
+                <div>
+                  <label className="block text-sm font-medium text-warmGray mb-1">Forma de Pagamento</label>
+                  <div className="relative">
+                      <select
+                        value={paymentMethod}
+                        onChange={(e) => setPaymentMethod(e.target.value)}
+                        className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-terracotta/50 focus:border-terracotta outline-none transition-all appearance-none bg-white font-medium text-gray-600"
+                      >
+                        <option value="">Selecione o método...</option>
+                        <option value="pix">Pix (Aprovação Imediata)</option>
+                        <option value="cartao">Cartão de Crédito</option>
+                        <option value="boleto">Boleto (até 3 dias úteis)</option>
+                      </select>
+                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
+                            <i className="bi bi-chevron-down text-xs"></i>
+                        </div>
+                   </div>
+                </div>
+            </div>
         </div>
 
-        {/* Endereço */}
-        <div className="mb-4">
-          <label className="block font-medium">Rua</label>
-          <input
-            type="text"
-            value={address.rua}
-            readOnly
-            className="w-full p-2 border rounded bg-gray-100"
-          />
-
-          <label className="block font-medium">Numero</label>
-          <input
-            type="text"
-            value={address.numero}
-            onChange={(e) => setAddress({ ...address, numero: e.target.value })}
-            className="w-full p-2 border rounded bg-gray-100"
-          />
-
-          <label className="block font-medium mt-2">Bairro</label>
-          <input
-            type="text"
-            value={address.bairro}
-            readOnly
-            className="w-full p-2 border rounded bg-gray-100"
-          />
-          <label className="block font-medium mt-2">Cidade</label>
-          <input
-            type="text"
-            value={address.cidade}
-            readOnly
-            className="w-full p-2 border rounded bg-gray-100"
-          />
-
-          <label className="block font-medium mt-2">Estado</label>
-          <input
-            type="text"
-            value={address.estado}
-            readOnly
-            className="w-full p-2 border rounded bg-gray-100"
-          />
+        {/* Resumo e Ação */}
+        <div className="mt-12 pt-8 border-t border-gray-100 flex flex-col items-center">
+            <div className="text-3xl font-serif font-bold text-terracotta mb-6">Total: R$ {total}</div>
+            
+            <button
+                type="button"
+                onClick={handleOrder}
+                disabled={loading}
+                className={`w-full max-w-md bg-terracotta text-white font-bold py-4 px-8 rounded-full shadow-lg hover:shadow-xl hover:bg-opacity-90 transition-all transform hover:-translate-y-1 active:translate-y-0 flex items-center justify-center gap-3 ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
+            >
+                {loading ? (
+                    <>
+                        <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></span>
+                        Processando...
+                    </>
+                ) : (
+                    <>
+                        <i className="bi bi-check-lg text-xl"></i>
+                        Finalizar Compra com Carinho
+                    </>
+                )}
+            </button>
         </div>
-
-        {/* Forma de Pagamento */}
-        <div className="mb-4">
-          <label className="block font-medium">Forma de Pagamento</label>
-          <select
-            value={paymentMethod}
-            onChange={(e) => setPaymentMethod(e.target.value)}
-            className="w-full p-2 border rounded"
-          >
-            <option value="">Selecione</option>
-            <option value="pix">Pix</option>
-            <option value="boleto">Boleto</option>
-            <option value="cartao">Cartão de Crédito</option>
-          </select>
-        </div>
-
-        {/* Resumo do Pedido */}
-        <div className="mb-4 font-semibold text-lg">Total: R$ {total}</div>
-
-        {/* Botão Finalizar */}
-        <button
-          type="button"
-          onClick={handleOrder}
-          className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600"
-        >
-          Finalizar Compra
-        </button>
       </div>
     </div>
   );

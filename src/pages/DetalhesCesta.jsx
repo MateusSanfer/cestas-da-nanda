@@ -58,8 +58,8 @@ const DetalhesCesta = ({ addToCart, baskets }) => {
   // Mostrar mensagem se a cesta não for encontrada
   if (!foundBasket) {
     return (
-      <div className="p-6 text-2xl mt-5 text-center text-red-600">
-        Cesta não encontrada.
+      <div className="p-10 text-2xl mt-5 text-center text-terracotta font-serif">
+        Produto não encontrado.
       </div>
     );
   }
@@ -112,58 +112,85 @@ const DetalhesCesta = ({ addToCart, baskets }) => {
       uid: Date.now(), // Para diferenciar itens no carrinho
     };
     addToCart(basketWithExtras);
-    toast.success("Cesta adicionada ao carrinho com sucesso!");
+    toast.success("Adicionado ao carrinho com carinho!");
     setIncludedExtraItems([]); // limpa extras
   };
 
   return (
-    <>
-      <div className="detalhes-container">
-        {/* Imagens da cesta */}
-        <GaleriaImagens
-          imagemPrincipal={imagemPrincipal}
-          setImagemPrincipal={setImagemPrincipal}
-          imagens={imagens}
-          alt={basket.name}
-        />
+    <div className="bg-cream min-h-screen font-sans flex flex-col pt-24">
+        <div className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 w-full">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                
+                {/* Galeria de Imagens (Esquerda) */}
+                <div className="space-y-4">
+                    <div className="aspect-square rounded-2xl overflow-hidden shadow-sm bg-white border border-gray-100 p-2">
+                            <img 
+                                src={imagemPrincipal || null} 
+                                alt={basket.name} 
+                                className="w-full h-full object-cover rounded-xl"
+                            />
+                    </div>
+                     <GaleriaImagens
+                        imagemPrincipal={imagemPrincipal}
+                        setImagemPrincipal={setImagemPrincipal}
+                        imagens={imagens}
+                        alt={basket.name}
+                    />
+                </div>
 
-        <div className="detalhes">
-          <h2 className="titulo">{basket.name}</h2>
-          <h3 className="font-bold">Itens Inclusos:</h3>
-          <ul>
-            {includedItems.map((item, index) => (
-              <li key={index}>{item}</li>
-            ))}
-          </ul>
-          {/* Adicionar Itens Extras */}
-          <SeletorExtras
-            availableExtras={availableExtras}
-            selectedExtra={selectedExtra}
-            setSelectedExtra={setSelectedExtra}
-            addExtra={addExtra}
-          />
+                {/* Detalhes do Produto (Direita) */}
+                <div className="flex flex-col space-y-8">
+                    <div>
+                        <h1 className="text-4xl font-serif font-bold text-charcoal mb-4">{basket.name}</h1>
+                        <p className="text-lg text-warmGray leading-relaxed">{basket.description}</p>
+                    </div>
 
-          {/* Itens Extras Adicionados */}
-          <ExtrasAdicionados
-            includedExtraItems={includedExtraItems}
-            removeExtra={removeExtra}
-          />
+                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-50">
+                        <h3 className="text-lg font-serif font-semibold text-terracotta mb-4 border-b border-gray-100 pb-2">
+                            O que acompanha este presente?
+                        </h3>
+                        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-charcoal">
+                            {includedItems.map((item, index) => (
+                            <li key={index} className="flex items-center gap-2">
+                                <i className="bi bi-check-circle-fill text-green-400 text-xs"></i> {item}
+                            </li>
+                            ))}
+                        </ul>
+                    </div>
 
-          {/* Preço e botão adicionar ao carrinho */}
-          <ResumoCompra
-            quantidade={quantidade}
-            setQuantidade={setQuantidade}
-            calculateTotal={calculateTotal}
-            handleAddToCart={handleAddToCart}
-          />
+                    {/* Personalização */}
+                    <div className="space-y-4">
+                         <h3 className="text-lg font-serif font-semibold text-charcoal">Personalize seu presente</h3>
+                         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-50">
+                            <SeletorExtras
+                                availableExtras={availableExtras}
+                                selectedExtra={selectedExtra}
+                                setSelectedExtra={setSelectedExtra}
+                                addExtra={addExtra}
+                            />
+                            <div className="mt-4">
+                                <ExtrasAdicionados
+                                    includedExtraItems={includedExtraItems}
+                                    removeExtra={removeExtra}
+                                />
+                            </div>
+                         </div>
+                    </div>
+
+                     {/* Resumo e Ação */}
+                     <div className="pt-6 border-t border-gray-200">
+                        <ResumoCompra
+                            quantidade={quantidade}
+                            setQuantidade={setQuantidade}
+                            calculateTotal={calculateTotal}
+                            handleAddToCart={handleAddToCart}
+                        />
+                     </div>
+                </div>
+            </div>
         </div>
-      </div>
-      <div className="descricao2 bg-gray-100 p-3">
-        <h2 className="text-2xl p-1">Descrição:</h2>
-        <p className="text-gray-700">{basket.description}</p>
-      </div>
       <Footer />
-    </>
+    </div>
   );
 };
 

@@ -1,13 +1,13 @@
 {
   "name": "cestas-da-nanda",
   "version": "0.1.0",
+  "proxy": "http://localhost:3001",
   "private": true,
   "dependencies": {
     "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
     "bootstrap-icons": "^1.11.3",
-    "cestas-da-nanda": "file:",
     "cors": "^2.8.5",
     "cra-template": "1.2.0",
     "express": "^4.21.2",
@@ -27,6 +27,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "server": "nodemon server.js",
+    "dev": "concurrently \"npm run server\" \"npm start\"",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -49,7 +51,7 @@
       "last 1 safari version"
     ]
   },
-  "description": "Cestas Da Nanda é uma loja online desenvolvida com **React.js** que permite aos clientes personalizar e adquirir cestas de presente de forma prática e intuitiva. A plataforma oferece uma experiência fluida, desde a escolha da cesta até o pagamento, proporcionando um serviço personalizado.",
+  "description": "Cestas Da Nanda é uma loja online desenvolvida com **React.js** que permite aos clientes personalizar e adquirir cestas de presente de forma prática e intuitiva.",
   "main": "tailwind.config.js",
   "repository": {
     "type": "git",
@@ -60,5 +62,9 @@
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/MateusSanfer/cestas-da-nanda/issues"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "nodemon": "^3.1.11"
   }
 }

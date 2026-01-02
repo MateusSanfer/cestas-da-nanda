@@ -4,23 +4,23 @@
 @tailwind utilities;
 
 /* Google Fonts */
-@import url("https://fonts.googleapis.com/css2?family=Krona+One&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
 
 /* Bootstrap Icons */
 @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css");
 
 :root {
-  --cor-primaria: #feffe5;
-  --cor-secundaria: #ffe893;
-  --cor-terciaria: #ff7e64;
-  --cor-hover: #fb9ec6;
+  --cor-primaria: #FDFBF7; /* Cream */
+  --cor-secundaria: #F4F1DE; /* Sand */
+  --cor-terciaria: #E07A5F; /* Terracotta */
+  --cor-hover: #D4A373; /* Gold */
 
-  --letras-logo: #ffde59;
-  --fundo-logo: #161a1a;
-  --hover-botao: #eb5cc9;
+  --letras-logo: #E07A5F; /* Terracotta */
+  --fundo-logo: #FDFBF7; /* Cream (was black) - Adjusting for Light Theme */
+  --hover-botao: #c4644a; /* Darker Terracotta */
 
-  --fonte-primaria: "Krona One", sans-serif;
-  --fonte-secundaria: "Montserrat", sans-serif;
+  --fonte-primaria: "Playfair Display", serif;
+  --fonte-secundaria: "Inter", sans-serif;
 }
 
 body {
@@ -100,32 +100,42 @@ body {
 /* Navegação */
 nav {
   position: fixed;
-  background-color: var(--fundo-logo) !important;
+  background-color: var(--cor-primaria) !important; /* Cream background */
   top: 0;
   left: 0;
   right: 0;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 5px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* Softer shadow */
+  padding: 10px 20px;
+  z-index: 50;
 }
 
 nav img {
   border-radius: 50%;
   height: 50px;
   width: 50px;
+  object-fit: cover;
+  border: 2px solid var(--cor-terciaria);
 }
 
 nav ul {
-  color: #fff;
-  gap: 10px;
+  color: var(--charcoal); /* Dark text for light background */
+  gap: 20px;
   margin-right: 10px;
+  display: flex;
+  align-items: center;
 }
 
 nav ul li {
-  font-size: 1.2rem;
+  font-size: 1rem;
+  font-family: var(--fonte-secundaria);
+  font-weight: 500;
+  color: #3D405B;
+  cursor: pointer;
+  transition: color 0.3s;
 }
 
 nav ul li:hover {
-  color: var(--letras-logo);
+  color: var(--cor-terciaria);
   font-weight: 600;
 }
 
@@ -150,49 +160,60 @@ h4 {
 
 /* Botões */
 .verMais {
-  font-size: 15px;
-  font-weight: bold;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cor-terciaria);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 .botaoAdd {
   background-color: var(--cor-terciaria);
-  font-weight: bold;
+  color: white;
+  font-weight: 600;
   font-size: 15px;
+  border-radius: 9999px; /* Pill shape */
+  padding: 8px 16px;
+  transition: all 0.3s;
 }
 
 .botaoAdd:hover {
   background: var(--hover-botao);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(224, 122, 95, 0.2);
 }
 
 /* Imagens */
 .foto {
   width: 150px;
-  height: auto;
-  border-radius: 5px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 12px;
   margin-left: 10px;
 }
 
 .total {
-  font-size: 1rem;
+  font-size: 1.1rem;
+  font-family: var(--fonte-primaria);
+  color: var(--charcoal);
   margin-right: 3px;
   justify-content: space-around;
 }
 
 /* Rodapé */
 .rodape {
-  background-color: var(--fundo-logo);
-  padding: 10px 30px;
-  color: #fff;
+  background-color: var(--cor-secundaria); /* Sand */
+  padding: 40px 30px;
+  color: #3D405B;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  
+  border-top: 1px solid #e5e7eb;
 }
 
 .redes{
   display: flex;
   align-items: center;
   gap: 10px;
-  
 }
 
 .icones {
@@ -203,4 +224,10 @@ h4 {
 .rodape i {
   font-size: 25px;
   cursor: pointer;
+  color: var(--cor-terciaria);
+  transition: color 0.3s;
+}
+
+.rodape i:hover {
+  color: var(--cor-hover);
 }
