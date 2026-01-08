@@ -13,7 +13,7 @@ const BasketList = ({ baskets, onEdit, onRefresh }) => {
       try {
         const token = localStorage.getItem("token");
         const config = { headers: { Authorization: `Bearer ${token}` } };
-        await axios.delete(`http://localhost:3001/api/baskets/${id}`, config);
+        await axios.delete(`/api/baskets/${id}`, config);
         onRefresh();
       } catch (error) {
         console.error("Erro ao deletar produto:", error);

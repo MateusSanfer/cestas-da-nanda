@@ -116,9 +116,7 @@ const BasketForm = ({ basket, onClose }) => {
       const token = localStorage.getItem("token");
       const config = { headers: { Authorization: `Bearer ${token}` } };
 
-      const url = `http://localhost:3001/api/baskets${
-        basket ? `/${basket.id}` : ""
-      }`;
+      const url = `/api/baskets${basket ? `/${basket.id}` : ""}`;
 
       // Show loading toast? (Optional, but good UX)
       // toast.loading('Salvando...', { id: 'saving' });

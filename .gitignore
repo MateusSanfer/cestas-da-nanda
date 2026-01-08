@@ -22,3 +22,8 @@ src/config/firebaseConfig.js
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# md files
+Walkthrough.md
+Checklist_de_requisitos.md
+Funcionalidades_correcoes.md

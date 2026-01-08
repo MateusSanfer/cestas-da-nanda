@@ -18,7 +18,7 @@ const OrderList = () => {
     } catch (error) {
       console.error(error);
       try {
-        const res = await axios.get("http://localhost:3001/api/orders");
+        const res = await axios.get("/api/orders");
         setOrders(res.data);
       } catch (e) {
         toast.error("Erro ao carregar pedidos.");

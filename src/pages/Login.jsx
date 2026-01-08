@@ -20,14 +20,14 @@ function Login() {
 
       if (isRegistering) {
         // REGISTRO
-        response = await axios.post("http://localhost:3001/auth/register", {
+        response = await axios.post("/auth/register", {
           name,
           email,
           password,
         });
       } else {
         // LOGIN
-        response = await axios.post("http://localhost:3001/auth/login", {
+        response = await axios.post("/auth/login", {
           email,
           password,
         });

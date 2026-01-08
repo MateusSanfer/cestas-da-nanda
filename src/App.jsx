@@ -83,7 +83,7 @@ function App() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3001/api/baskets")
+      .get("/api/baskets")
       .then((res) => {
         const basketsFromAPI = res.data.map((basket) => ({
           ...basket,
