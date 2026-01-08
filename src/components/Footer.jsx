@@ -8,13 +8,18 @@ const Footer = () => {
       <div className="redes">
         <p>Nossas Redes Sociais</p>
         <div className="icones">
-          <a href="#">
+          <button className="text-terracotta hover:text-charcoal transition-colors">
             <i className="bi bi-instagram"></i>
-          </a>
-          <a href="#">
+          </button>
+          <button className="text-terracotta hover:text-charcoal transition-colors">
             <i className="bi bi-whatsapp"></i>
-          </a>
-          <a href="https://www.linkedin.com/in/mateus-sanfer/" target="_blank">
+          </button>
+          <a
+            href="https://www.linkedin.com/in/mateus-sanfer/"
+            target="_blank"
+            rel="noreferrer"
+            className="text-terracotta hover:text-charcoal transition-colors"
+          >
             <i className="bi bi-linkedin"></i>
           </a>
         </div>

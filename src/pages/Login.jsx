@@ -162,12 +162,13 @@ function Login() {
                   Senha
                 </label>
                 {!isRegistering && (
-                  <a
-                    href="#"
-                    className="text-xs text-terracotta hover:underline"
+                  <button
+                    type="button"
+                    onClick={() => alert("Função em desenvolvimento")}
+                    className="text-xs text-terracotta hover:underline bg-transparent border-none p-0 cursor-pointer"
                   >
                     Esqueceu a senha?
-                  </a>
+                  </button>
                 )}
               </div>
               <input

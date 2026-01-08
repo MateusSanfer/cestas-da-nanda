@@ -13,7 +13,6 @@ function Header({ user, cart = [], setCart }) {
 
   // Notification Logic
   const [lastOrderId, setLastOrderId] = useState(null);
-  const [soundAllowed, setSoundAllowed] = useState(false); // Browser blocks audio without interaction
 
   useEffect(() => {
     // Only run for admins

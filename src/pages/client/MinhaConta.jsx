@@ -30,27 +30,27 @@ const MinhaConta = () => {
     const parsedUser = JSON.parse(storedUser);
     setUser(parsedUser);
     setFormData((prev) => ({ ...prev, name: parsedUser.name }));
+    const fetchMyOrders = async (token) => {
+      try {
+        const config = { headers: { Authorization: `Bearer ${token}` } };
+        const res = await axios.get("/api/orders/me", config);
+        setOrders(res.data);
+      } catch (error) {
+        console.error("Erro ao buscar meus pedidos:", error);
+
+        if (error.response?.status === 401) {
+          toast.error("Sessão expirada. Faça login novamente.");
+          localStorage.removeItem("user");
+          localStorage.removeItem("token");
+          navigate("/login");
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchMyOrders(token);
   }, [navigate]);
-
-  const fetchMyOrders = async (token) => {
-    try {
-      const config = { headers: { Authorization: `Bearer ${token}` } };
-      const res = await axios.get("/api/orders/me", config);
-      setOrders(res.data);
-    } catch (error) {
-      console.error("Erro ao buscar meus pedidos:", error);
-
-      if (error.response?.status === 401) {
-        toast.error("Sessão expirada. Faça login novamente.");
-        localStorage.removeItem("user");
-        localStorage.removeItem("token");
-        navigate("/login");
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
