@@ -82,6 +82,45 @@ const authController = {
   },
 };
 
+authController.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.findAll({
+      attributes: ["id", "name", "email", "isAdmin"],
+    });
+    res.json(users);
+  } catch (error) {
+    console.error("Erro ao buscar usuários:", error);
+    res.status(500).json({ error: "Erro ao buscar usuários" });
+  }
+};
+
+authController.updateUserRole = async (req, res) => {
+  const { id } = req.params;
+  const { isAdmin } = req.body;
+
+  try {
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(404).json({ error: "Usuário não encontrado" });
+    }
+
+    // Evitar que o próprio admin se remova (opcional, mas recomendado)
+    if (req.user.userId === user.id && isAdmin === false) {
+      return res
+        .status(400)
+        .json({ error: "Você não pode remover seu próprio status de admin." });
+    }
+
+    user.isAdmin = isAdmin;
+    await user.save();
+
+    res.json({ message: `Status de admin atualizado para ${isAdmin}`, user });
+  } catch (error) {
+    console.error("Erro ao atualizar função do usuário:", error);
+    res.status(500).json({ error: "Erro ao atualizar usuário" });
+  }
+};
+
 module.exports = authController;
 
 authController.updateProfile = async (req, res) => {

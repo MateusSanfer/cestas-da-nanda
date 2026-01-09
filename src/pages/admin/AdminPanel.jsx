@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import BasketList from "./BasketList";
 import BasketForm from "./BasketForm";
 import OrderList from "./OrderList";
+import UserList from "./UserList";
 import axios from "axios";
 
 const AdminPanel = () => {
@@ -59,6 +60,16 @@ const AdminPanel = () => {
           </button>
           <button
             className={`px-6 py-3 rounded-full font-semibold transition-all shadow-sm flex items-center gap-2 ${
+              activeTab === "users"
+                ? "bg-terracotta text-white shadow-md transform -translate-y-0.5"
+                : "bg-white text-gray-500 hover:text-terracotta hover:bg-gray-50"
+            }`}
+            onClick={() => setActiveTab("users")}
+          >
+            <i className="bi bi-people-fill"></i> Usuários
+          </button>
+          <button
+            className={`px-6 py-3 rounded-full font-semibold transition-all shadow-sm flex items-center gap-2 ${
               activeTab === "orders"
                 ? "bg-terracotta text-white shadow-md transform -translate-y-0.5"
                 : "bg-white text-gray-500 hover:text-terracotta hover:bg-gray-50"
@@ -70,7 +81,9 @@ const AdminPanel = () => {
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
-          {activeTab === "baskets" ? (
+          {activeTab === "users" ? (
+            <UserList />
+          ) : activeTab === "baskets" ? (
             <>
               <h2 className="text-2xl font-serif font-bold text-charcoal mb-6 border-l-4 border-terracotta pl-4">
                 {selectedBasket ? "Editar Produto" : "Cadastrar Novo Produto"}
