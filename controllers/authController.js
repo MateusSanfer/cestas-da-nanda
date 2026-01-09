@@ -45,10 +45,16 @@ const authController = {
     try {
       const user = await User.findOne({ where: { email } });
       if (!user) {
+        console.log(`[LOGIN ERROR] User not found for email: ${email}`);
         return res.status(404).json({ error: "Usuário não encontrado" });
       }
 
+      console.log(`[LOGIN DEBUG] User found: ${user.email}, ID: ${user.id}`);
+      console.log(`[LOGIN DEBUG] Stored Hash: ${user.password}`);
+
       const isPasswordValid = await bcrypt.compare(password, user.password);
+      console.log(`[LOGIN DEBUG] Password valid: ${isPasswordValid}`);
+
       if (!isPasswordValid) {
         return res.status(401).json({ error: "Senha incorreta" });
       }
@@ -92,12 +98,10 @@ authController.updateProfile = async (req, res) => {
     // Atualização de Nome (Limitado a 1 vez se já tiver sido alterado)
     if (name && name !== user.name) {
       if (user.hasChangedName) {
-        return res
-          .status(403)
-          .json({
-            error:
-              "Você já alterou seu nome uma vez. Entre em contato com o suporte.",
-          });
+        return res.status(403).json({
+          error:
+            "Você já alterou seu nome uma vez. Entre em contato com o suporte.",
+        });
       }
       user.name = name;
       user.hasChangedName = true;
