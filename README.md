@@ -1,37 +1,40 @@
-# 🎁 Cestas Da Nanda - Loja Online  
+# 🎁 Nanda Ateliê - Loja Online
 
-Cestas Da Nanda é uma loja online desenvolvida com **React.js** que permite aos clientes personalizar e adquirir cestas de presente de forma prática e intuitiva. A plataforma oferece uma experiência fluida, desde a escolha da cesta até o pagamento, proporcionando um serviço personalizado.  
+Nanda Ateliê é uma loja online desenvolvida com **React.js** que permite aos clientes adquirir produtos personalizados (como sandálias e cestas) de forma prática e intuitiva. A plataforma oferece uma experiência fluida, desde a escolha do produto até o pagamento, proporcionando um serviço personalizado.
 
-A plataforma permite **visualizar, buscar e adicionar cestas ao carrinho**, incluindo **itens extras** antes da finalização da compra. Além disso, conta com um **painel administrativo**, onde o administrador pode gerenciar produtos e pedidos.  
+A plataforma permite **visualizar, buscar e adicionar cestas ao carrinho**, incluindo **itens extras** antes da finalização da compra. Além disso, conta com um **painel administrativo**, onde o administrador pode gerenciar produtos e pedidos.
 
-## 📌 Funcionalidades  
+## 📌 Funcionalidades
 
-### 🛍️ Para os clientes:  
-- Exibição de cestas com imagens, descrições e preços.  
-- Pesquisa de cestas por nome e descrição.  
-- Página de detalhes de cada cesta com opção de adicionar itens extras.  
-- Carrinho de compras dinâmico, atualizando automaticamente o preço total.  
-- **Checkout**:  
-  - Cálculo automático do preço total, incluindo itens extras.  
-  - Preenchimento automático do endereço via **API ViaCEP**.  
-  - Escolha do método de pagamento (**Pix, boleto, cartão**).  
+### 🛍️ Para os clientes:
 
-### 🔧 Para o administrador:  
-- Cadastro, edição e remoção de cestas.  
-- Gerenciamento de pedidos realizados pelos clientes.  
+- Exibição de cestas com imagens, descrições e preços.
+- Pesquisa de cestas por nome e descrição.
+- Página de detalhes de cada cesta com opção de adicionar itens extras.
+- Carrinho de compras dinâmico, atualizando automaticamente o preço total.
+- **Checkout**:
+  - Cálculo automático do preço total, incluindo itens extras.
+  - Preenchimento automático do endereço via **API ViaCEP**.
+  - Escolha do método de pagamento (**Pix, boleto, cartão**).
 
----
+### 🔧 Para o administrador:
 
-## 🛠️ Tecnologias Utilizadas  
-- **React.js** ⚛️  
-- **React Router** (para navegação) 🚏  
-- **Tailwind CSS + Bootstrap** (para estilização) 🎨  
-- **Firebase Authentication** 🔥 (para login/administração)  
-- **API ViaCEP** 📍 (para preenchimento automático do endereço)  
+- Cadastro, edição e remoção de cestas.
+- Gerenciamento de pedidos realizados pelos clientes.
 
 ---
 
-## 🚀 Como Rodar o Projeto  
+## 🛠️ Tecnologias Utilizadas
+
+- **React.js** ⚛️
+- **React Router** (para navegação) 🚏
+- **Tailwind CSS + Bootstrap** (para estilização) 🎨
+- **Firebase Authentication** 🔥 (para login/administração)
+- **API ViaCEP** 📍 (para preenchimento automático do endereço)
+
+---
+
+## 🚀 Como Rodar o Projeto
 
 ```sh
 # Clone o repositório
@@ -48,63 +51,70 @@ A aplicação estará disponível em `http://localhost:3000`.
 
 ---
 
-## 📂 Estrutura do Projeto  
+## 📂 Estrutura do Projeto
+
 ```
-📦 src  
- ┣ 📂 assets      # Imagens e outros arquivos estáticos  
- ┣ 📂 components  # Componentes reutilizáveis  
- ┣ 📂 pages       # Páginas principais  
- ┣ 📂 utils       # Funções auxiliares (ex: cálculo de total do carrinho)  
- ┣ 📜 App.js      # Componente principal  
- ┣ 📜 index.js    # Ponto de entrada da aplicação  
+📦 src
+ ┣ 📂 assets      # Imagens e outros arquivos estáticos
+ ┣ 📂 components  # Componentes reutilizáveis
+ ┣ 📂 pages       # Páginas principais
+ ┣ 📂 utils       # Funções auxiliares (ex: cálculo de total do carrinho)
+ ┣ 📜 App.js      # Componente principal
+ ┣ 📜 index.js    # Ponto de entrada da aplicação
 ```
 
 ---
 
-## 📜 Principais Componentes  
+## 📜 Principais Componentes
 
-### `CardCesta.jsx`  
-- Renderiza um cartão com os detalhes da cesta.  
-- Possui um botão **"Ver mais detalhes"** que leva à página de detalhes.  
+### `CardCesta.jsx`
 
-### `DetalhesCesta.jsx`  
-- Exibe detalhes da cesta selecionada.  
-- Permite adicionar itens extras e calcular o preço total antes da compra.  
+- Renderiza um cartão com os detalhes da cesta.
+- Possui um botão **"Ver mais detalhes"** que leva à página de detalhes.
 
-### `Carrinho.jsx`  
-- Lista os produtos adicionados ao carrinho.  
-- Exibe o cálculo atualizado do total, incluindo itens extras.  
-- Redireciona para a página de pagamento.  
+### `DetalhesCesta.jsx`
 
-### `Pagamento.jsx`  
-- Responsável pela finalização da compra.  
-- Coleta os dados do cliente e o endereço.  
-- Integra-se com a **API ViaCEP** para preenchimento automático do endereço.  
-- Permite escolher entre **Pix, boleto ou cartão de crédito**.  
+- Exibe detalhes da cesta selecionada.
+- Permite adicionar itens extras e calcular o preço total antes da compra.
 
----
+### `Carrinho.jsx`
 
-## 🔗 Rotas da Aplicação  
+- Lista os produtos adicionados ao carrinho.
+- Exibe o cálculo atualizado do total, incluindo itens extras.
+- Redireciona para a página de pagamento.
 
-| Rota               | Descrição                              |
-|------------------|----------------------------------|
-| `/`               | Página inicial                    |
-| `/cesta/:id/:slug` | Página de detalhes da cesta      |
-| `/carrinho`        | Página do carrinho               |
-| `/pagamento`       | Checkout e finalização do pedido |
-| `/admin`           | Painel administrativo *(acesso restrito via login)* |
+### `Pagamento.jsx`
+
+- Responsável pela finalização da compra.
+- Coleta os dados do cliente e o endereço.
+- Integra-se com a **API ViaCEP** para preenchimento automático do endereço.
+- Permite escolher entre **Pix, boleto ou cartão de crédito**.
 
 ---
 
-## 📌 Melhorias Futuras  
-- Integração com gateway de pagamento real.  
-- Implementação de um sistema de rastreamento de pedidos.  
-- Área do cliente para acompanhar compras e histórico de pedidos.  
+## 🔗 Rotas da Aplicação
+
+| Rota               | Descrição                                           |
+| ------------------ | --------------------------------------------------- |
+| `/`                | Página inicial                                      |
+| `/cesta/:id/:slug` | Página de detalhes da cesta                         |
+| `/carrinho`        | Página do carrinho                                  |
+| `/pagamento`       | Checkout e finalização do pedido                    |
+| `/admin`           | Painel administrativo _(acesso restrito via login)_ |
 
 ---
 
-## 👨‍💻 Contribuição  
-Caso queira contribuir, siga os passos:  
+## 📌 Melhorias Futuras
+
+- Integração com gateway de pagamento real.
+- Implementação de um sistema de rastreamento de pedidos.
+- Área do cliente para acompanhar compras e histórico de pedidos.
+
+---
+
+## 👨‍💻 Contribuição
+
+Caso queira contribuir, siga os passos:
 
 ```sh
 # 1️⃣ Faça um fork do repositório.
@@ -122,13 +132,14 @@ git push origin minha-feature
 
 ---
 
-## 📜 Licença  
-Este projeto é **open-source** e pode ser utilizado e modificado livremente.  
+## 📜 Licença
+
+Este projeto é **open-source** e pode ser utilizado e modificado livremente.
 
 ---
 
-## 📢 Observações  
-Esta loja ainda está em fase de desenvolvimento, então novas funcionalidades podem ser adicionadas conforme necessário!  
+## 📢 Observações
+
+Esta loja ainda está em fase de desenvolvimento, então novas funcionalidades podem ser adicionadas conforme necessário!
 
 🚀 **Desenvolvido por Mateus**
-

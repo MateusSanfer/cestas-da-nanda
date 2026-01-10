@@ -57,7 +57,7 @@ function Confirmacao() {
             Pedido #{orderId} Realizado!
           </h1>
           <p className="text-warmGray text-lg">
-            Obrigado por escolher a Cestas da Nanda.
+            Obrigado por escolher a Nanda Ateliê.
           </p>
         </div>
 

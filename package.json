@@ -1,5 +1,5 @@
 {
-  "name": "cestas-da-nanda",
+  "name": "nanda-atelie",
   "version": "0.1.0",
   "proxy": "http://localhost:3001",
   "private": true,
@@ -52,7 +52,7 @@
       "last 1 safari version"
     ]
   },
-  "description": "Cestas Da Nanda é uma loja online desenvolvida com **React.js** que permite aos clientes personalizar e adquirir cestas de presente de forma prática e intuitiva.",
+  "description": "Nanda Ateliê é uma loja online desenvolvida com **React.js** que permite aos clientes adquirir produtos personalizados de forma prática e intuitiva.",
   "main": "tailwind.config.js",
   "repository": {
     "type": "git",

@@ -96,3 +96,57 @@ Fundo da página deve ser creme.
 Inputs devem ter borda suave e ficar "terracota" quando clicados.
 Botão "Finalizar Compra" deve ser Terracota.
 Nota Técnica: Se algo parecer "quebrado" ou com cores antigas, tente recarregar a página com Ctrl + F5 para limpar o cache do navegador.
+
+
+# Guia de Deploy - Railway
+Preparei sua aplicação para ser implantada na Railway. Abaixo estão os passos para colocar seu site no ar.
+
+Alterações Realizadas
+Refatoração de URLs: Substituí todas as chamadas http://localhost:3001 por caminhos relativos.
+Configuração do Banco: Atualizei o 
+config/config.json
+ para ler a variável DATABASE_URL.
+Scripts de Inicialização: Ajustei o 
+package.json
+ e o 
+server.js
+ para produção.
+Passo a Passo para Deploy
+1. GitHub
+Certifique-se de enviar seu código atualizado.
+
+2. Criar Projeto na Railway
+Acesse railway.app.
+New Project > Deploy from GitHub repo > selecione cestas-da-nanda.
+3. Adicionar Banco (MySQL)
+Adicione um serviço MySQL.
+Copie a DATABASE_URL (aba Variables do MySQL) ou MYSQL_URL.
+4. Configurar Variáveis (Site)
+No serviço do seu site, adicione:
+
+NODE_ENV: production
+DATABASE_URL: [Cole a URL do MySQL]
+JWT_SECRET: [Crie uma senha secreta qualquer]
+🛠️ Resolução de Problemas Comuns
+Erro 500 ao Cadastrar
+Causa: Tabelas não criadas.
+Solução: O 
+server.js
+ já foi ajustado para rodar db.sequelize.sync() automaticamente. Reinicie o deploy se necessário.
+Erro 401 (Senha Incorreta) ao Logar como Admin
+Causa: Edição manual no banco de dados pode corromper a senha ou o status de admin.
+Solução: Use a Rota de Emergência criada no sistema.
+Acesse: https://seu-site.up.railway.app/admin-fix-secret?email=seu@email.com
+Isso corrigirá o status de admin sem quebrar a senha.
+Importante: Remova essa rota do 
+server.js
+ após o uso para segurança.
+Gerenciamento de Usuários (Novo)
+O painel administrativo agora possui uma aba Usuários.
+
+Listagem: Veja todos os usuários cadastrados, nome, email e status.
+Busca: Use a barra de pesquisa para filtrar rapidamente por nome ou email.
+Gerenciar Permissões:
+Clique em "Tornar Admin" para elevar um cliente a administrador.
+Clique em "Remover Admin" para rebaixar um administrador.
+Nota: O sistema impede que você remova seu próprio acesso de admin.

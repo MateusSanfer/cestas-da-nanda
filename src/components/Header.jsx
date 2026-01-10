@@ -140,11 +140,11 @@ function Header({ user, cart = [], setCart }) {
                 <div className="flex items-center gap-3">
                   <img
                     src={logo}
-                    alt="Logo Cestas Da Nanda"
+                    alt="Logo Nanda Ateliê"
                     className="h-12 w-12 rounded-full border-2 border-terracotta object-cover"
                   />
                   <span className="text-xl md:text-2xl font-serif font-bold text-terracotta tracking-tight">
-                    Cestas Da Nanda
+                    Nanda Ateliê
                   </span>
                 </div>
               </Link>
